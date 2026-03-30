@@ -1,0 +1,72 @@
+text,intent
+How can I apply for admission?,admission
+What are the entry requirements?,admission
+How do I become a new student?,admission
+How can I register as a student?,admission
+What documents are needed for admission?,admission
+Can I apply online for admission?,admission
+How do I submit my application?,admission
+Where can I apply as a new student?,admission
+
+How much is the tuition fee?,fees
+When is the payment deadline?,fees
+Can I pay my fees online?,fees
+How do I check my fee balance?,fees
+Are installment payments available?,fees
+Where can I pay my tuition fees?,fees
+Is there a late payment penalty?,fees
+Can I pay using bank transfer?,fees
+
+What courses are offered?,courses
+Do you offer computer science?,courses
+List the available programmes,courses
+What diploma courses do you have?,courses
+What degree programmes are available?,courses
+Can I study business here?,courses
+Do you have IT programmes?,courses
+What subjects can I enroll in?,courses
+
+How can I check my class timetable?,timetable
+Where do I see my schedule?,timetable
+When are my classes?,timetable
+How do I view my timetable online?,timetable
+Where can I check today's classes?,timetable
+Can I download my class schedule?,timetable
+How do I know my lecture time?,timetable
+Where is the timetable page?,timetable
+
+How can I contact the university?,contact
+What is the office phone number?,contact
+What is the email address of the admin office?,contact
+How do I reach student services?,contact
+What is the university contact email?,contact
+Who should I call for enquiries?,contact
+Can I contact the registrar office?,contact
+What is the hotline number?,contact
+
+Hi,greeting
+Hello,greeting
+Good morning,greeting
+Hey there,greeting
+Good afternoon,greeting
+Hi chatbot,greeting
+Hello bot,greeting
+Good evening,greeting
+
+Thank you,thanks
+Thanks a lot,thanks
+Thanks,thanks
+Thank you very much,thanks
+I appreciate your help,thanks
+Thanks for the information,thanks
+Much appreciated,thanks
+That helps a lot,thanks
+
+Bye,goodbye
+See you,goodbye
+Goodbye,goodbye
+Talk to you later,goodbye
+See you next time,goodbye
+Bye bye,goodbye
+Catch you later,goodbye
+I will chat again later,goodbye

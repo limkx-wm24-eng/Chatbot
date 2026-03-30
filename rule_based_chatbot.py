@@ -1,0 +1,89 @@
+import re
+import string
+
+def clean_text(text: str) -> str:
+    text = str(text).lower().strip()
+    text = re.sub(r"http\S+|www\S+", "", text)
+    text = text.translate(str.maketrans("", "", string.punctuation))
+    text = re.sub(r"\s+", " ", text)
+    return text
+
+# Rule patterns
+rules = {
+    "admission": [
+        r"\bapply\b", r"\badmission\b", r"\benroll\b", r"\bentry\b",
+        r"\bregister\b", r"\bnew student\b"
+    ],
+    "fees": [
+        r"\bfee\b", r"\btuition\b", r"\bpayment\b", r"\bbalance\b",
+        r"\binstallment\b", r"\btransfer\b"
+    ],
+    "courses": [
+        r"\bcourse\b", r"\bprogramme\b", r"\bprogram\b", r"\bdiploma\b",
+        r"\bdegree\b", r"\bcomputer science\b", r"\bit\b", r"\bbusiness\b"
+    ],
+    "timetable": [
+        r"\btimetable\b", r"\bschedule\b", r"\bclass\b", r"\blecture\b"
+    ],
+    "contact": [
+        r"\bcontact\b", r"\bphone\b", r"\bemail\b", r"\bhotline\b",
+        r"\benquiries\b", r"\bstudent services\b"
+    ],
+    "greeting": [
+        r"\bhi\b", r"\bhello\b", r"\bhey\b", r"\bgood morning\b",
+        r"\bgood afternoon\b", r"\bgood evening\b"
+    ],
+    "thanks": [
+        r"\bthank\b", r"\bthanks\b", r"\bappreciate\b"
+    ],
+    "goodbye": [
+        r"\bbye\b", r"\bgoodbye\b", r"\bsee you\b", r"\bcatch you later\b"
+    ]
+}
+
+responses = {
+    "admission": "You can apply through the university admission portal and submit the required documents.",
+    "fees": "You can check tuition fees and payment deadlines through the finance office or student portal.",
+    "courses": "The university offers programmes such as IT, Business, and other diploma or degree courses.",
+    "timetable": "You can view your class timetable through the student portal.",
+    "contact": "You can contact the university through the official email or phone number listed on the website.",
+    "greeting": "Hello. How can I help you today?",
+    "thanks": "You are welcome.",
+    "goodbye": "Goodbye. Have a nice day."
+}
+
+# Rule-based prediction
+def predict_intent(user_input: str):
+    text = clean_text(user_input)
+    scores = {}
+
+    for intent, patterns in rules.items():
+        score = 0
+        for pattern in patterns:
+            if re.search(pattern, text):
+                score += 1
+        if score > 0:
+            scores[intent] = score
+
+    if not scores:
+        return None
+
+    return max(scores, key=scores.get)
+
+# Chat loop
+print("\nUniversity FAQ Chatbot (Rule-Based)")
+while True:
+    user_input = input("You: ")
+
+    if user_input.lower() in ["exit", "quit"]:
+        print("Bot: Goodbye.")
+        break
+
+    intent = predict_intent(user_input)
+
+    if intent:
+        print("Predicted intent:", intent)
+        print("Bot:", responses.get(intent))
+    else:
+        print("Predicted intent: None")
+        print("Bot: Sorry, I do not understand your question.")

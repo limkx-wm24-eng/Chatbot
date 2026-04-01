@@ -1,5 +1,7 @@
 text,intent
 Can I apply anytime?,admission
+Can I apply for admission this month?,admission
+Can I apply for admission without visiting campus?,admission
 Can I apply from home?,admission
 Can I apply immediately?,admission
 Can I apply now?,admission
@@ -19,6 +21,7 @@ Can you explain how to enroll?,admission
 Can you explain the admission process?,admission
 Can you guide me on admission?,admission
 Can you guide me through admission?,admission
+Can you guide me through the enrollment process?,admission
 Can you help me with admission?,admission
 Can you tell me the admission steps?,admission
 How can I apply as a new student?,admission
@@ -40,22 +43,28 @@ How can I submit my form?,admission
 How do I access the application form?,admission
 How do I apply as an international student?,admission
 How do I apply for a course?,admission
+How do I apply for admission online step by step?,admission
 How do I apply for degree programs?,admission
 How do I apply for studies here?,admission
 How do I apply for studies?,admission
+How do I apply for the upcoming intake?,admission
+How do I apply for university admission easily?,admission
 How do I apply here?,admission
 How do I apply now?,admission
 How do I apply quickly?,admission
 How do I apply step by step online?,admission
 How do I apply step by step?,admission
 How do I apply to this university?,admission
+How do I begin my admission application?,admission
 How do I complete application online?,admission
 How do I complete enrollment?,admission
 How do I complete my application?,admission
+How do I complete the admission registration?,admission
 How do I complete the admission steps?,admission
 How do I confirm my admission?,admission
 How do I enroll as a student?,admission
 How do I enroll for classes?,admission
+How do I enroll in a programme?,admission
 How do I fill the application form?,admission
 How do I get admission approval?,admission
 How do I get admission confirmation?,admission
@@ -63,7 +72,9 @@ How do I get into this university?,admission
 How do I get started with admission?,admission
 How do I join the university?,admission
 How do I join this university?,admission
+How do I proceed with my application?,admission
 How do I register as a new student?,admission
+How do I register for admission online?,admission
 How do I register for admission?,admission
 How do I register for classes?,admission
 How do I send my documents?,admission
@@ -82,6 +93,7 @@ Is admission open now?,admission
 Is online application available?,admission
 Is online enrollment possible?,admission
 Is there a deadline for application?,admission
+Is there a guide for admission application?,admission
 Is there an admission portal?,admission
 Is there an online admission system?,admission
 Is there an online form for admission?,admission
@@ -92,6 +104,7 @@ What are the requirements for applying?,admission
 What are the requirements to apply?,admission
 What are the steps to apply?,admission
 What are the steps to enroll?,admission
+What do I need before applying for admission?,admission
 What do I need before applying?,admission
 What do I need for enrollment?,admission
 What do I need to apply?,admission
@@ -115,11 +128,14 @@ What is the first step for admission?,admission
 What is the full admission process?,admission
 What is the procedure for admission?,admission
 What is the procedure to join?,admission
+What is the process for new student registration?,admission
 What is the process of applying?,admission
 What is the process to join?,admission
+What should I do first to apply?,admission
 What should I do to enroll?,admission
 What should I prepare for admission?,admission
 What steps are involved in admission?,admission
+What steps should I follow to apply?,admission
 When can I apply for admission?,admission
 When can I start applying?,admission
 When does admission open?,admission
@@ -128,8 +144,11 @@ When is the application closing date?,admission
 When should I apply?,admission
 Where can I apply for admission?,admission
 Where can I apply online?,admission
+Where can I check admission requirements?,admission
 Where can I find the admission form?,admission
+Where can I get admission application details?,admission
 Where can I register?,admission
+Where can I submit my admission form?,admission
 Where do I apply for courses?,admission
 Where do I begin enrollment?,admission
 Where do I register for admission?,admission
@@ -137,8 +156,10 @@ Where do I send my application?,admission
 Where do I start my application?,admission
 Where do I submit my application?,admission
 Where do I upload documents?,admission
+Where do I upload my admission documents?,admission
 Where is the application link?,admission
 Where should I apply?,admission
+,
 Can I ask general questions?,contact
 Can I call admission office?,contact
 Can I call finance office?,contact
@@ -299,6 +320,7 @@ Who manages class schedules?,contact
 Who should I contact for admission?,contact
 Who should I contact for help?,contact
 Who should I email for support?,contact
+,
 Are business programmes available?,courses
 Are course transfers allowed?,courses
 Are courses open to all students?,courses
@@ -312,6 +334,7 @@ Are there beginner-friendly programmes?,courses
 Are there certificate courses?,courses
 Are there courses in engineering?,courses
 Are there courses in software development?,courses
+Are there courses related to IT?,courses
 Are there fast-track courses?,courses
 Are there full-time programmes?,courses
 Are there management courses?,courses
@@ -319,11 +342,14 @@ Are there prerequisites for courses?,courses
 Are weekend courses available?,courses
 Can I change my course later?,courses
 Can I choose a different programme later?,courses
+Can I choose electives in my course?,courses
 Can I choose multiple courses?,courses
 Can I download course information?,courses
+Can I get a list of all available courses?,courses
 Can I get full programme details?,courses
 Can I modify my course selection?,courses
 Can I see the course list?,courses
+Can I see the full list of programmes?,courses
 Can I study accounting?,courses
 Can I study artificial intelligence?,courses
 Can I study business management?,courses
@@ -342,6 +368,8 @@ Can you explain the available courses?,courses
 Can you guide me on courses?,courses
 Can you list the courses offered?,courses
 Can you recommend a programme?,courses
+Can you recommend popular programmes?,courses
+Can you show me available degree programmes?,courses
 Can you show me the available programmes?,courses
 Can you suggest popular courses?,courses
 Do you have IT courses?,courses
@@ -352,17 +380,21 @@ Do you have short courses?,courses
 Do you offer advanced programmes?,courses
 Do you offer business programmes?,courses
 Do you offer computer science?,courses
+Do you offer courses in technology?,courses
 Do you offer data science courses?,courses
 Do you offer degree courses?,courses
 Do you offer diploma in IT?,courses
 Do you offer diploma in business?,courses
 Do you offer evening classes?,courses
+Do you offer flexible course options?,courses
 Do you offer flexible study options?,courses
 Do you offer foundation courses?,courses
 Do you offer part-time courses?,courses
+Do you offer short-term courses?,courses
 Do you offer skill-based courses?,courses
 Do you offer specialized programmes?,courses
 Do you provide IT-related courses?,courses
+Do you provide courses for beginners?,courses
 Do you provide engineering courses?,courses
 Do you provide undergraduate courses?,courses
 How can I get course details?,courses
@@ -391,6 +423,7 @@ What are the course categories?,courses
 What are the course options?,courses
 What are the popular courses?,courses
 What are the programme requirements?,courses
+What are the study options available?,courses
 What are the study options?,courses
 What are trending programmes?,courses
 What can I study here?,courses
@@ -407,9 +440,13 @@ What courses are offered this year?,courses
 What courses are offered?,courses
 What courses are open for admission?,courses
 What courses are suitable for beginners?,courses
+What courses are suitable for my interest?,courses
+What courses are trending now?,courses
+What courses can I choose from?,courses
 What courses can I enroll in?,courses
 What courses can I finish quickly?,courses
 What courses can I take?,courses
+What courses can help my career?,courses
 What courses fit my interests?,courses
 What courses have good career prospects?,courses
 What courses require prior knowledge?,courses
@@ -421,15 +458,20 @@ What happens if I change programmes?,courses
 What information is available about courses?,courses
 What is the process to change courses?,courses
 What options do I have for study?,courses
+What programmes are currently available?,courses
 What programmes are offered here?,courses
+What programmes are open for enrollment?,courses
 What programmes are popular among students?,courses
 What programmes are suitable for working students?,courses
 What programmes can I apply for?,courses
 What programmes can I choose?,courses
+What programmes can I join this semester?,courses
 What programmes do you have?,courses
 What qualifications are needed for courses?,courses
 What science courses do you offer?,courses
+What subjects are available this year?,courses
 What subjects are included in courses?,courses
+What subjects are included in your programmes?,courses
 What subjects can I enroll in?,courses
 What technology courses do you offer?,courses
 Where can I find programme information?,courses
@@ -439,9 +481,11 @@ Which course is best for me?,courses
 Which courses are in high demand?,courses
 Which courses are recommended?,courses
 Which programmes can I study?,courses
+,
 Are installment payments available?,fees
 Are there extra charges?,fees
 Can I check my fees online?,fees
+Can I check my tuition fees online?,fees
 Can I delay my fee payment?,fees
 Can I download my receipt?,fees
 Can I get a fee summary?,fees
@@ -450,6 +494,7 @@ Can I negotiate payment terms?,fees
 Can I pay fees anytime?,fees
 Can I pay fees at the office?,fees
 Can I pay fees before enrollment?,fees
+Can I pay fees before the deadline?,fees
 Can I pay fees from overseas?,fees
 Can I pay fees in advance?,fees
 Can I pay fees in cash?,fees
@@ -459,7 +504,9 @@ Can I pay fees through apps?,fees
 Can I pay fees through online banking?,fees
 Can I pay fees using ATM?,fees
 Can I pay fees using credit card?,fees
+Can I pay fees using my bank account?,fees
 Can I pay fees using my phone?,fees
+Can I pay fees using online transfer?,fees
 Can I pay my fees online?,fees
 Can I pay through mobile banking?,fees
 Can I pay using bank transfer?,fees
@@ -482,6 +529,7 @@ How do I access the payment system?,fees
 How do I avoid penalty charges?,fees
 How do I calculate my fees?,fees
 How do I check additional fees?,fees
+How do I check fee status online?,fees
 How do I check if my fees are paid?,fees
 How do I check if my payment is successful?,fees
 How do I check my fee balance?,fees
@@ -489,11 +537,17 @@ How do I check payment status?,fees
 How do I complete first payment?,fees
 How do I complete payment online?,fees
 How do I confirm my payment?,fees
+How do I confirm my tuition payment?,fees
 How do I convert currency for payment?,fees
 How do I ensure my payment is recorded?,fees
+How do I find my fee breakdown?,fees
 How do I handle initial fees?,fees
+How do I know how much to pay?,fees
+How do I know if I paid successfully?,fees
 How do I know my fee amount?,fees
+How do I make a payment online?,fees
 How do I manage my fee payment?,fees
+How do I manage my tuition payments?,fees
 How do I pay fees after admission?,fees
 How do I pay fees as a new student?,fees
 How do I pay fees from another country?,fees
@@ -511,6 +565,7 @@ How do I settle overdue fees?,fees
 How do I track my payment?,fees
 How do I use the payment system?,fees
 How do I verify my payment?,fees
+How do I view my fee details?,fees
 How do international students check fees?,fees
 How do international students pay fees?,fees
 How much are the course fees?,fees
@@ -538,22 +593,27 @@ Is there a late payment penalty?,fees
 Is there a payment counter?,fees
 Is there a penalty for late payment?,fees
 Is there a portal for fee payment?,fees
+Is there a system to check my fees?,fees
+Is there a way to track my payments?,fees
 Is there any additional charge?,fees
 Is there any discount on fees?,fees
 Is there confirmation after payment?,fees
 Is there extra charge for international payment?,fees
 Please tell me how to pay fees,fees
 Please tell me the fee amount,fees
+What are my payment options available?,fees
 What are the accepted payment methods?,fees
 What are the payment options?,fees
 What are the tuition fees?,fees
 What do I need to pay fees?,fees
+What happens after I complete payment?,fees
 What happens after I pay fees?,fees
 What happens if I don't pay on time?,fees
 What happens if I pay late?,fees
 What if I miss the payment deadline?,fees
 What is included in tuition fees?,fees
 What is my current fee balance?,fees
+What is my total tuition cost?,fees
 What is the cost of tuition?,fees
 What is the deadline for payment?,fees
 What is the due date for fees?,fees
@@ -568,17 +628,21 @@ What payment options are available for international students?,fees
 What should I do after payment?,fees
 When is the payment deadline?,fees
 When should I pay my fees?,fees
+Where can I check my remaining balance?,fees
 Where can I find payment instructions?,fees
+Where can I get my fee receipt?,fees
 Where can I get payment details?,fees
 Where can I log in to pay fees?,fees
 Where can I pay my tuition fees?,fees
 Where can I see my fee statement?,fees
+Where can I see my payment history?,fees
 Where can I view my tuition balance?,fees
 Where do I check payment details?,fees
 Where do I confirm payment?,fees
 Where do I make fee payment?,fees
 Where do I pay my tuition?,fees
 Where do new students pay fees?,fees
+,
 "Alright, I am done, goodbye",goodbye
 "Alright, I am leaving now",goodbye
 "Alright, bye",goodbye
@@ -710,25 +774,36 @@ Talk to you later chatbot,goodbye
 Talk to you later today,goodbye
 Talk to you tomorrow,goodbye
 "Thank you, bye",goodbye
+"Thank you, bye",goodbye
+"Thank you, bye for now",goodbye
+"Thank you, catch you later",goodbye
 "Thank you, catch you later",goodbye
 "Thank you, goodbye",goodbye
 "Thank you, goodbye for now",goodbye
 "Thank you, see you later",goodbye
+"Thank you, see you later",goodbye
+"Thank you, talk soon",goodbye
+"Thanks, I will go now",goodbye
 "Thanks, bye",goodbye
 "Thanks, bye",goodbye
 "Thanks, bye for now",goodbye
 "Thanks, catch you later",goodbye
 "Thanks, goodbye",goodbye
 "Thanks, goodbye",goodbye
+"Thanks, goodbye",goodbye
 "Thanks, see you",goodbye
 "Thanks, see you later",goodbye
 "Thanks, see you next time",goodbye
+"Thanks, see you next time",goodbye
 "Thanks, see you soon",goodbye
+"Thanks, see you soon",goodbye
+"Thanks, talk to you later",goodbye
 "Thanks, talk to you later",goodbye
 "Thanks, talk to you later",goodbye
 "That is all I needed, goodbye",goodbye
 "That is all, goodbye",goodbye
 "That is it, bye",goodbye
+,
 Good afternoon,greeting
 Good afternoon again,greeting
 "Good afternoon, I have a question",greeting
@@ -754,16 +829,23 @@ Hello there again,greeting
 "Hello, I am back",greeting
 "Hello, I am here again",greeting
 "Hello, I have a question",greeting
+"Hello, I have something to ask",greeting
 "Hello, I just entered",greeting
 "Hello, I just joined",greeting
+"Hello, I just need some help",greeting
+"Hello, I need assistance",greeting
 "Hello, I need information",greeting
 "Hello, I need some help",greeting
 "Hello, I want to ask something",greeting
+"Hello, I would like some help",greeting
+"Hello, I would like some information",greeting
 "Hello, I'm here",greeting
 "Hello, are you available?",greeting
 "Hello, are you ready?",greeting
 "Hello, can we talk?",greeting
 "Hello, can you assist me?",greeting
+"Hello, can you help me with something?",greeting
+"Hello, can you support me?",greeting
 "Hello, everything okay?",greeting
 "Hello, friendly greetings",greeting
 "Hello, glad to see you",greeting
@@ -796,16 +878,22 @@ Hey there again,greeting
 Hey there chatbot,greeting
 "Hey, I am back",greeting
 "Hey, I have a question",greeting
+"Hey, I have a question for you",greeting
 "Hey, I just arrived",greeting
 "Hey, I just joined",greeting
 "Hey, I need assistance",greeting
+"Hey, I need guidance",greeting
+"Hey, I need some assistance",greeting
 "Hey, I want some information",greeting
 "Hey, I would like some help",greeting
+"Hey, I would like to ask something",greeting
 "Hey, I'm here",greeting
 "Hey, all good?",greeting
 "Hey, are you free?",greeting
 "Hey, are you online?",greeting
 "Hey, can I chat with you?",greeting
+"Hey, can I get some information?",greeting
+"Hey, can you assist me today?",greeting
 "Hey, can you help me?",greeting
 "Hey, friendly greetings",greeting
 "Hey, glad to see you",greeting
@@ -834,20 +922,27 @@ Hi everyone,greeting
 Hi system,greeting
 Hi there,greeting
 Hi there again,greeting
+"Hi there, how can you help me?",greeting
 "Hi, I am back",greeting
 "Hi, I am here again",greeting
+"Hi, I am looking for help",greeting
+"Hi, I have a quick question",greeting
 "Hi, I just came in",greeting
 "Hi, I just logged in",greeting
 "Hi, I need assistance",greeting
 "Hi, I need guidance",greeting
 "Hi, I need help",greeting
 "Hi, I need some information",greeting
+"Hi, I need your help",greeting
 "Hi, I want to ask something",greeting
 "Hi, I'm here",greeting
 "Hi, are you active?",greeting
 "Hi, are you there?",greeting
 "Hi, can I ask something?",greeting
+"Hi, can I talk to you?",greeting
 "Hi, can we chat?",greeting
+"Hi, can you answer my question?",greeting
+"Hi, can you guide me?",greeting
 "Hi, can you help me?",greeting
 "Hi, can you respond?",greeting
 "Hi, everything good?",greeting
@@ -869,11 +964,14 @@ Hi there again,greeting
 "Hi, warm greetings",greeting
 "Hi, what's up?",greeting
 "Hi, wishing you a good day",greeting
+,
 I am very grateful,thanks
 I appreciate it,thanks
 I appreciate the quick response,thanks
 I appreciate your assistance,thanks
+I appreciate your help today,thanks
 I appreciate your response,thanks
+I really appreciate your assistance,thanks
 I really appreciate your help,thanks
 I truly appreciate it,thanks
 Many thanks,thanks
@@ -890,6 +988,7 @@ Thank you chatbot,thanks
 Thank you for assisting me,thanks
 Thank you for assisting me today,thanks
 Thank you for clarifying,thanks
+Thank you for clearing that up,thanks
 Thank you for explaining,thanks
 Thank you for getting back to me,thanks
 Thank you for giving me details,thanks
@@ -898,6 +997,7 @@ Thank you for replying quickly,thanks
 Thank you for responding,thanks
 Thank you for sharing the information,thanks
 Thank you for solving my issue,thanks
+Thank you for solving my problem,thanks
 Thank you for taking the time,thanks
 Thank you for the answer,thanks
 Thank you for the clear answer,thanks
@@ -908,9 +1008,11 @@ Thank you for the information provided,thanks
 Thank you for the quick help,thanks
 Thank you for the quick support,thanks
 Thank you for the support,thanks
+Thank you for your assistance today,thanks
 Thank you for your effort,thanks
 Thank you for your help,thanks
 Thank you for your help today,thanks
+Thank you for your support today,thanks
 Thank you for your support today,thanks
 Thank you for your time,thanks
 Thank you kindly,thanks
@@ -959,6 +1061,7 @@ Thanks bot,thanks
 Thanks chatbot,thanks
 Thanks for assisting me today,thanks
 Thanks for clarifying,thanks
+Thanks for clearing that up,thanks
 Thanks for explaining,thanks
 Thanks for getting back to me,thanks
 Thanks for giving me details,thanks
@@ -967,12 +1070,14 @@ Thanks for making it clear,thanks
 Thanks for responding,thanks
 Thanks for sharing the information,thanks
 Thanks for solving my issue,thanks
+Thanks for solving my problem,thanks
 Thanks for taking the time to help,thanks
 Thanks for the answer,thanks
 Thanks for the clear answer,thanks
 Thanks for the detailed explanation,thanks
 Thanks for the explanation,thanks
 Thanks for the fast reply,thanks
+Thanks for the help today,thanks
 Thanks for the information,thanks
 Thanks for the information provided,thanks
 Thanks for the quick help,thanks
@@ -984,6 +1089,7 @@ Thanks for your assistance,thanks
 Thanks for your effort,thanks
 Thanks for your guidance,thanks
 Thanks for your help today,thanks
+Thanks for your support today,thanks
 Thanks for your support today,thanks
 Thanks for your time,thanks
 Thanks heaps,thanks
@@ -1019,33 +1125,46 @@ Thanks system,thanks
 "Thanks, this is helpful",thanks
 That helps a lot,thanks
 "That was really helpful, thanks",thanks
+,
+Can I access my timetable from the website?,timetable
 Can I access timetable easily?,timetable
 Can I access timetable from phone?,timetable
 Can I access timetable from student portal?,timetable
+Can I check my class plan for the week?,timetable
+Can I check my class timings online?,timetable
+Can I check my timetable anytime online?,timetable
 Can I check my timetable anytime?,timetable
 Can I check my timetable on the portal?,timetable
 Can I check my timetable online anytime?,timetable
+Can I check my timetable through the student portal?,timetable
 Can I check timetable for next week?,timetable
 Can I check timetable remotely?,timetable
 Can I download my class timetable?,timetable
 Can I download my timetable?,timetable
+Can I find my timetable on the system?,timetable
 Can I log in to check timetable anywhere?,timetable
 Can I print my class schedule?,timetable
 Can I refresh my timetable?,timetable
 Can I see my class details?,timetable
+Can I see my timetable for upcoming classes?,timetable
 Can I see timetable before classes start?,timetable
 Can I see today's classes?,timetable
 Can I share my timetable?,timetable
 Can I view my schedule online?,timetable
+Can I view my timetable for all subjects?,timetable
 Can I view my timetable on my phone?,timetable
 Can I view schedule by subject?,timetable
 Can new students view timetable?,timetable
 Can timetable be updated?,timetable
 Can you help me find my schedule?,timetable
+How can I check my daily class schedule?,timetable
 How can I check my timetable?,timetable
 How can I check tomorrow's classes?,timetable
+How can I find out my class schedule?,timetable
 How can I see my schedule?,timetable
+How can I view my timetable for today?,timetable
 How do I access my class schedule?,timetable
+How do I access my full timetable?,timetable
 How do I access my weekly schedule?,timetable
 How do I access timetable for first semester?,timetable
 How do I access timetable from the portal?,timetable
@@ -1057,6 +1176,7 @@ How do I check my lecture schedule?,timetable
 How do I check my subjects schedule?,timetable
 How do I check my subjects timetable?,timetable
 How do I check my timetable for this week?,timetable
+How do I check my upcoming timetable?,timetable
 How do I check schedule on phone?,timetable
 How do I check schedule updates?,timetable
 How do I check timetable after enrollment?,timetable
@@ -1065,6 +1185,7 @@ How do I check timetable for each subject?,timetable
 How do I check timetable on mobile?,timetable
 How do I check upcoming lectures?,timetable
 How do I confirm my class schedule?,timetable
+How do I find my timetable for this semester?,timetable
 How do I get a PDF of my timetable?,timetable
 How do I get a copy of my timetable?,timetable
 How do I get my initial schedule?,timetable
@@ -1072,8 +1193,10 @@ How do I get my timetable?,timetable
 How do I keep a copy of my timetable?,timetable
 How do I know if class time changes?,timetable
 How do I know my class times?,timetable
+How do I know my lecture timetable?,timetable
 How do I know my next lecture?,timetable
 How do I know subject schedule?,timetable
+How do I know what classes I have?,timetable
 How do I know when lectures are?,timetable
 How do I know when my classes are?,timetable
 How do I navigate to timetable page?,timetable
@@ -1081,11 +1204,13 @@ How do I open my timetable?,timetable
 How do I open timetable in portal?,timetable
 How do I print my timetable?,timetable
 How do I save my timetable?,timetable
+How do I see my timetable for this month?,timetable
 How do I see my timetable online?,timetable
 How do I see timetable without computer?,timetable
 How do I see upcoming classes?,timetable
 How do I track timetable changes?,timetable
 How do I view future classes?,timetable
+How do I view my course schedule?,timetable
 How do I view my schedule?,timetable
 How do I view timetable on tablet?,timetable
 I need information about my timetable,timetable
@@ -1119,8 +1244,10 @@ What time is my next class?,timetable
 When are my classes?,timetable
 When is my programming class?,timetable
 When will I receive my timetable?,timetable
+Where can I check my class schedule today?,timetable
 Where can I check my class schedule?,timetable
 Where can I check my lectures?,timetable
+Where can I check my timetable details?,timetable
 Where can I export my timetable?,timetable
 Where can I find my next class time?,timetable
 Where can I find my timetable?,timetable
@@ -1129,13 +1256,20 @@ Where can I print my schedule?,timetable
 Where can I see latest timetable?,timetable
 Where can I see my class schedule?,timetable
 Where can I see my class timetable?,timetable
+Where can I see my enrolled class schedule?,timetable
+Where can I see my timetable updates?,timetable
+Where can I see my weekly class schedule?,timetable
 Where can I see subject timings?,timetable
 Where can I see updated timetable?,timetable
 Where can I view my class plan?,timetable
 Where can I view my class schedule?,timetable
 Where can I view my enrolled classes?,timetable
+Where can I view my timetable information?,timetable
 Where can I view timetable on mobile?,timetable
+Where do I access my class timetable online?,timetable
 Where do I check my classes?,timetable
+Where do I check my lecture schedule online?,timetable
+Where do I check my subject timings?,timetable
 Where do I download my schedule?,timetable
 Where do I find course timetable?,timetable
 Where do I find my class times?,timetable

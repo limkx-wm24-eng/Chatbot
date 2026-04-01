@@ -153,6 +153,28 @@ How do I get admission confirmation?,admission
 Can I apply immediately?,admission
 What are the requirements for applying?,admission
 
+How do I begin my admission application?,admission
+Where can I submit my admission form?,admission
+Can you guide me through the enrollment process?,admission
+How do I apply for admission online step by step?,admission
+What should I do first to apply?,admission
+How do I register for admission online?,admission
+Where do I upload my admission documents?,admission
+Can I apply for admission without visiting campus?,admission
+How do I apply for the upcoming intake?,admission
+What is the process for new student registration?,admission
+
+How do I apply for university admission easily?,admission
+Where can I get admission application details?,admission
+What steps should I follow to apply?,admission
+How do I enroll in a programme?,admission
+Can I apply for admission this month?,admission
+What do I need before applying for admission?,admission
+How do I proceed with my application?,admission
+Is there a guide for admission application?,admission
+How do I complete the admission registration?,admission
+Where can I check admission requirements?,admission
+
 How much is the tuition fee?,fees
 What are the tuition fees?,fees
 How do I pay my fees?,fees
@@ -306,6 +328,28 @@ Can I use foreign currency to pay?,fees
 How do I convert currency for payment?,fees
 Is there extra charge for international payment?,fees
 How do international students check fees?,fees
+
+How do I view my fee details?,fees
+Can I check my tuition fees online?,fees
+Where can I see my payment history?,fees
+How do I know how much to pay?,fees
+What is my total tuition cost?,fees
+Can I pay fees using online transfer?,fees
+Where can I get my fee receipt?,fees
+How do I make a payment online?,fees
+Is there a system to check my fees?,fees
+How do I confirm my tuition payment?,fees
+
+What happens after I complete payment?,fees
+Can I pay fees using my bank account?,fees
+How do I find my fee breakdown?,fees
+Where can I check my remaining balance?,fees
+How do I know if I paid successfully?,fees
+Is there a way to track my payments?,fees
+How do I check fee status online?,fees
+Can I pay fees before the deadline?,fees
+How do I manage my tuition payments?,fees
+What are my payment options available?,fees
 
 What courses are offered?,courses
 What programmes do you have?,courses
@@ -461,6 +505,28 @@ Can I choose a different programme later?,courses
 What is the process to change courses?,courses
 Can I modify my course selection?,courses
 
+What courses can I choose from?,courses
+Can you show me available degree programmes?,courses
+What subjects are included in your programmes?,courses
+Do you offer courses in technology?,courses
+What programmes are open for enrollment?,courses
+Can I get a list of all available courses?,courses
+What are the study options available?,courses
+Do you provide courses for beginners?,courses
+What programmes can I join this semester?,courses
+Are there courses related to IT?,courses
+
+Can you recommend popular programmes?,courses
+What courses are suitable for my interest?,courses
+Do you offer short-term courses?,courses
+What programmes are currently available?,courses
+Can I see the full list of programmes?,courses
+What courses are trending now?,courses
+Do you offer flexible course options?,courses
+What subjects are available this year?,courses
+Can I choose electives in my course?,courses
+What courses can help my career?,courses
+
 How can I check my timetable?,timetable
 Where can I view my class schedule?,timetable
 How do I see my timetable online?,timetable
@@ -604,6 +670,35 @@ How do I check schedule on phone?,timetable
 Where can I view timetable on mobile?,timetable
 Can I log in to check timetable anywhere?,timetable
 
+How can I view my timetable for today?,timetable
+Where can I check my class schedule today?,timetable
+How do I find my timetable for this semester?,timetable
+Can I check my timetable through the student portal?,timetable
+Where can I see my weekly class schedule?,timetable
+How do I know my lecture timetable?,timetable
+Can I access my timetable from the website?,timetable
+Where do I check my subject timings?,timetable
+How can I find out my class schedule?,timetable
+Can I see my timetable for upcoming classes?,timetable
+
+Where can I check my timetable details?,timetable
+How do I view my course schedule?,timetable
+Can I check my timetable anytime online?,timetable
+Where can I see my enrolled class schedule?,timetable
+How do I know what classes I have?,timetable
+Can I view my timetable for all subjects?,timetable
+Where do I access my class timetable online?,timetable
+How can I check my daily class schedule?,timetable
+Can I find my timetable on the system?,timetable
+Where do I check my lecture schedule online?,timetable
+
+How do I see my timetable for this month?,timetable
+Can I check my class timings online?,timetable
+Where can I view my timetable information?,timetable
+How do I access my full timetable?,timetable
+Can I check my class plan for the week?,timetable
+Where can I see my timetable updates?,timetable
+How do I check my upcoming timetable?,timetable
 Where can I see my class schedule?,timetable
 Where can I check my class schedule?,timetable
 Where do I view my class schedule?,timetable
@@ -938,6 +1033,28 @@ Hey AI,greeting
 "Hi, polite greetings",greeting
 "Hello, polite greetings",greeting
 
+"Hi there, how can you help me?",greeting
+"Hello, I would like some help",greeting
+"Hey, I need some assistance",greeting
+"Hi, can you guide me?",greeting
+"Hello, I have something to ask",greeting
+"Hey, can I get some information?",greeting
+"Hi, I need your help",greeting
+"Hello, can you help me with something?",greeting
+"Hey, I have a question for you",greeting
+"Hi, can I talk to you?",greeting
+
+"Hello, I just need some help",greeting
+"Hey, I would like to ask something",greeting
+"Hi, I have a quick question",greeting
+"Hello, I need assistance",greeting
+"Hey, can you assist me today?",greeting
+"Hi, I am looking for help",greeting
+"Hello, I would like some information",greeting
+"Hey, I need guidance",greeting
+"Hi, can you answer my question?",greeting
+"Hello, can you support me?",greeting
+
 Thank you,thanks
 Thanks,thanks
 Thanks a lot,thanks
@@ -1103,6 +1220,17 @@ Thank you again for the information,thanks
 "Thanks, bye",thanks
 "Thank you, bye",thanks
 
+Thanks for the help today,thanks
+Thank you for your assistance today,thanks
+I appreciate your help today,thanks
+Thanks for clearing that up,thanks
+Thank you for clearing that up,thanks
+Thanks for solving my problem,thanks
+Thank you for solving my problem,thanks
+Thanks for your support today,thanks
+Thank you for your support today,thanks
+I really appreciate your assistance,thanks
+
 Goodbye,goodbye
 Bye,goodbye
 See you,goodbye
@@ -1267,3 +1395,14 @@ Farewell,goodbye
 "Farewell, have a great day",goodbye
 "Farewell, see you soon",goodbye
 "Farewell, catch you later",goodbye
+
+"Thank you, bye",goodbye
+"Thanks, goodbye",goodbye
+"Thank you, see you later",goodbye
+"Thanks, talk to you later",goodbye
+"Thank you, catch you later",goodbye
+"Thanks, see you soon",goodbye
+"Thank you, bye for now",goodbye
+"Thanks, see you next time",goodbye
+"Thank you, talk soon",goodbye
+"Thanks, I will go now",goodbye

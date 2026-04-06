@@ -37,7 +37,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Pipeline
 model = Pipeline([
-    ("tfidf", TfidfVectorizer(stop_words="english")),
+    ("tfidf", TfidfVectorizer(stop_words="english", ngram_range=(1, 2))),
     ("clf", MultinomialNB())
 ])
 

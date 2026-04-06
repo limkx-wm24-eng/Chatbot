@@ -10,10 +10,10 @@ from sklearn.metrics import accuracy_score, classification_report
 from datasets import Dataset
 from transformers import (
     AutoTokenizer,
-    AutoModelForSequenceClassification,
+    AutoModelForSequenceClassification, 
+    DataCollatorWithPadding,              
     TrainingArguments,
-    Trainer,
-    DataCollatorWithPadding,
+    Trainer
 )
 
 print("Running Transformer Chatbot")
@@ -116,7 +116,7 @@ def compute_metrics(eval_pred):
 # =========================
 training_args = TrainingArguments(
     output_dir="./transformer_results",
-    eval_strategy="epoch",
+    evaluation_strategy="epoch",
     save_strategy="epoch",
     logging_strategy="epoch",
     learning_rate=2e-5,
@@ -136,7 +136,7 @@ trainer = Trainer(
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=test_dataset,
-    tokenizer=tokenizer,
+    processing_class=tokenizer,
     data_collator=data_collator,
     compute_metrics=compute_metrics
 )

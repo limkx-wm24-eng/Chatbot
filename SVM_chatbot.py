@@ -33,7 +33,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 model = Pipeline([
-    ("tfidf", TfidfVectorizer(stop_words="english", ngram_range=(1, 2))),
+    ("tfidf", TfidfVectorizer(stop_words="english", ngram_range=(1, 2), min_df=2)),
     ("clf", LinearSVC())
 ])
 

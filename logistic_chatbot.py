@@ -20,9 +20,14 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text
 
+# Remove empty rows first
 df = df.dropna(subset=["text", "intent"]).copy()
-df["text"] = df["text"].apply(clean_text)
+df["text"] = df["text"].astype(str).str.strip()
 df["intent"] = df["intent"].astype(str).str.strip()
+df = df[(df["text"] != "") & (df["intent"] != "")]
+
+# Clean text
+df["text"] = df["text"].apply(clean_text)
 
 X = df["text"]
 y = df["intent"]
@@ -40,7 +45,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Pipeline
 model = Pipeline([
     ("tfidf", TfidfVectorizer(stop_words="english", ngram_range=(1, 2))),
-    ("clf", LogisticRegression(max_iter=2000, random_state=42))
+    ("clf", LogisticRegression(
+        max_iter=2000,
+        random_state=42,
+        solver="lbfgs"
+    ))
 ])
 
 # Train
@@ -66,11 +75,13 @@ responses = {
 print("\nUniversity FAQ Chatbot (Logistic Regression)")
 while True:
     user_input = input("You: ")
+
     if user_input.lower() in ["exit", "quit", "goodbye"]:
         print("Bot: Goodbye.")
         break
 
     cleaned = clean_text(user_input)
     intent = model.predict([cleaned])[0]
+
     print("Predicted intent:", intent)
     print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))

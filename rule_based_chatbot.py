@@ -15,12 +15,13 @@ rules = {
         r"\bregister\b", r"\bnew student\b"
     ],
     "fees": [
-        r"\bfee\b", r"\btuition\b", r"\bpayment\b", r"\bbalance\b",
+        r"\bfee\b", r"\bfees\b", r"\btuition\b", r"\bpayment\b", r"\bbalance\b",
         r"\binstallment\b", r"\btransfer\b"
     ],
     "courses": [
-        r"\bcourse\b", r"\bprogramme\b", r"\bprogram\b", r"\bdiploma\b",
-        r"\bdegree\b", r"\bcomputer science\b", r"\bit\b", r"\bbusiness\b"
+        r"\bcourse\b", r"\bcourses\b", r"\bprogramme\b", r"\bprogram\b",
+        r"\bdiploma\b", r"\bdegree\b", r"\bcomputer science\b",
+        r"\binformation technology\b", r"\bbusiness\b"
     ],
     "timetable": [
         r"\btimetable\b", r"\bschedule\b", r"\bclass\b", r"\blecture\b"
@@ -52,7 +53,6 @@ responses = {
     "goodbye": "Goodbye. Have a nice day."
 }
 
-# Rule-based prediction
 def predict_intent(user_input: str):
     text = clean_text(user_input)
     scores = {}
@@ -70,12 +70,11 @@ def predict_intent(user_input: str):
 
     return max(scores, key=scores.get)
 
-# Chat loop
 print("\nUniversity FAQ Chatbot (Rule-Based)")
 while True:
     user_input = input("You: ")
 
-    if user_input.lower() in ["exit", "quit"]:
+    if user_input.lower() in ["exit", "quit", "goodbye"]:
         print("Bot: Goodbye.")
         break
 
@@ -83,7 +82,7 @@ while True:
 
     if intent:
         print("Predicted intent:", intent)
-        print("Bot:", responses.get(intent))
+        print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))
     else:
         print("Predicted intent: None")
         print("Bot: Sorry, I do not understand your question.")

@@ -20,9 +20,14 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text
 
+# Remove empty rows first
 df = df.dropna(subset=["text", "intent"]).copy()
-df["text"] = df["text"].apply(clean_text)
+df["text"] = df["text"].astype(str).str.strip()
 df["intent"] = df["intent"].astype(str).str.strip()
+df = df[(df["text"] != "") & (df["intent"] != "")]
+
+# Clean text
+df["text"] = df["text"].apply(clean_text)
 
 X = df["text"]
 y = df["intent"]
@@ -45,7 +50,8 @@ model = Pipeline([
         activation="relu",
         solver="adam",
         max_iter=500,
-        random_state=42
+        random_state=42,
+        early_stopping=True
     ))
 ])
 
@@ -72,11 +78,13 @@ responses = {
 print("\nUniversity FAQ Chatbot (MLP)")
 while True:
     user_input = input("You: ")
+
     if user_input.lower() in ["exit", "quit", "goodbye"]:
         print("Bot: Goodbye.")
         break
 
     cleaned = clean_text(user_input)
     intent = model.predict([cleaned])[0]
+
     print("Predicted intent:", intent)
     print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))

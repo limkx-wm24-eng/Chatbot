@@ -12,33 +12,37 @@ def clean_text(text: str) -> str:
 rules = {
     "admission": [
         r"\bapply\b", r"\badmission\b", r"\benroll\b", r"\bentry\b",
-        r"\bregister\b", r"\bnew student\b"
+        r"\bregister\b", r"\bnew student\b", r"\bapplication\b",
+        r"\benrollment\b"
     ],
     "fees": [
         r"\bfee\b", r"\bfees\b", r"\btuition\b", r"\bpayment\b", r"\bbalance\b",
-        r"\binstallment\b", r"\btransfer\b"
+        r"\binstallment\b", r"\btransfer\b", r"\bpay\b", r"\breceipt\b"
     ],
     "courses": [
         r"\bcourse\b", r"\bcourses\b", r"\bprogramme\b", r"\bprogram\b",
         r"\bdiploma\b", r"\bdegree\b", r"\bcomputer science\b",
-        r"\binformation technology\b", r"\bbusiness\b"
+        r"\binformation technology\b", r"\bbusiness\b", r"\bsubjects\b"
     ],
     "timetable": [
-        r"\btimetable\b", r"\bschedule\b", r"\bclass\b", r"\blecture\b"
+        r"\btimetable\b", r"\bschedule\b", r"\bclass schedule\b",
+        r"\blecture\b", r"\bclass timing\b", r"\bclass time\b"
     ],
     "contact": [
         r"\bcontact\b", r"\bphone\b", r"\bemail\b", r"\bhotline\b",
-        r"\benquiries\b", r"\bstudent services\b"
+        r"\benquiries\b", r"\bstudent services\b", r"\bcall\b",
+        r"\breach\b", r"\bget in touch\b"
     ],
     "greeting": [
         r"\bhi\b", r"\bhello\b", r"\bhey\b", r"\bgood morning\b",
-        r"\bgood afternoon\b", r"\bgood evening\b"
+        r"\bgood afternoon\b", r"\bgood evening\b", r"\bgreetings\b"
     ],
     "thanks": [
-        r"\bthank\b", r"\bthanks\b", r"\bappreciate\b"
+        r"\bthank\b", r"\bthanks\b", r"\bappreciate\b", r"\bthank you\b"
     ],
     "goodbye": [
-        r"\bbye\b", r"\bgoodbye\b", r"\bsee you\b", r"\bcatch you later\b"
+        r"\bbye\b", r"\bgoodbye\b", r"\bsee you\b", r"\bcatch you later\b",
+        r"\btalk to you later\b", r"\bfarewell\b"
     ]
 }
 
@@ -67,13 +71,33 @@ def predict_intent(user_input: str):
             scores[intent] = score
 
     if not scores:
-        return None
+        return "unknown"
 
-    return max(scores, key=scores.get)
+    # Priority order (most important first)
+    priority_order = [
+        "admission", "fees", "courses",
+        "timetable", "contact",
+        "greeting", "thanks", "goodbye"
+    ]
+
+    # Pick best based on priority + score
+    best_intent = None
+    best_score = -1
+
+    for intent in priority_order:
+        score = scores.get(intent, 0)
+    if score > best_score:
+        best_score = score
+        best_intent = intent
+
+    if best_score == 0:
+        return "unknown"
+
+    return best_intent
 
 print("\nUniversity FAQ Chatbot (Rule-Based)")
 while True:
-    user_input = input("You: ")
+    user_input = input("You: ").strip()
 
     if user_input.lower() in ["exit", "quit", "goodbye"]:
         print("Bot: Goodbye.")
@@ -81,9 +105,5 @@ while True:
 
     intent = predict_intent(user_input)
 
-    if intent:
-        print("Predicted intent:", intent)
-        print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))
-    else:
-        print("Predicted intent: None")
-        print("Bot: Sorry, I do not understand your question.")
+    print("Predicted intent:", intent)
+    print("Bot:", responses.get(intent, responses["unknown"]))

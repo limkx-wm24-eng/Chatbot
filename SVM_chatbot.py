@@ -41,7 +41,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 model = Pipeline([
     ("tfidf", TfidfVectorizer(stop_words="english", ngram_range=(1, 2), min_df=2)),
-    ("clf", LinearSVC())
+    ("clf", LinearSVC(class_weight="balanced"))
 ])
 
 model.fit(X_train, y_train)
@@ -62,22 +62,25 @@ responses = {
     "unknown": "Sorry, I can only answer questions about admission, fees, courses, timetable, contact, greetings, thanks, and goodbye."
 }
 
+THRESHOLD = 0.2
+
 print("\nUniversity FAQ Chatbot (SVM)")
 while True:
-    user_input = input("You: ")
+    user_input = input("You: ").strip()
 
     if user_input.lower() in ["exit", "quit", "goodbye"]:
         print("Bot: Goodbye.")
         break
 
     cleaned = clean_text(user_input)
+
     scores = model.decision_function([cleaned])[0]
     best_score = scores.max()
     intent = model.classes_[scores.argmax()]
 
-if best_score < 0.2:
-    print("Predicted intent: unknown")
-    print("Bot: Sorry, I do not understand your question.")
-else:
-    print("Predicted intent:", intent)
-    print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))
+    if best_score < THRESHOLD:
+        print("Predicted intent: unknown")
+        print("Bot:", responses["unknown"])
+    else:
+        print("Predicted intent:", intent)
+        print("Bot:", responses.get(intent, responses["unknown"]))

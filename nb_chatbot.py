@@ -69,16 +69,28 @@ responses = {
     "unknown": "Sorry, I can only answer questions about admission, fees, courses, timetable, contact, greetings, thanks, and goodbye."
 }
 
+THRESHOLD = 0.35
+
 print("\nUniversity FAQ Chatbot (Naive Bayes)")
 while True:
-    user_input = input("You: ")
+    user_input = input("You: ").strip()
 
     if user_input.lower() in ["exit", "quit", "goodbye"]:
         print("Bot: Goodbye.")
         break
 
     cleaned = clean_text(user_input)
-    intent = model.predict([cleaned])[0]
 
-    print("Predicted intent:", intent)
-    print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))
+    probs = model.predict_proba([cleaned])[0]
+    best_index = probs.argmax()
+    best_score = probs[best_index]
+    intent = model.classes_[best_index]
+
+    if best_score < THRESHOLD:
+        print("Predicted intent: unknown")
+        print(f"Confidence: {best_score:.2f}")
+        print("Bot:", responses["unknown"])
+    else:
+        print("Predicted intent:", intent)
+        print(f"Confidence: {best_score:.2f}")
+        print("Bot:", responses.get(intent, responses["unknown"]))

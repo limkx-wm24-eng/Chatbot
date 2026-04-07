@@ -20,7 +20,7 @@ from transformers import (
 print("Running Improved Transformer Chatbot")
 
 MODEL_DIR = "final_transformer_model"
-CONFIDENCE_THRESHOLD = 0.25
+CONFIDENCE_THRESHOLD = 0.40
 
 # =========================
 # Basic cleaning
@@ -128,11 +128,13 @@ if os.path.exists(MODEL_DIR):
     model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR)
 else:
     model = AutoModelForSequenceClassification.from_pretrained(
-        model_name,
-        num_labels=len(label_list),
-        id2label=id2label,
-        label2id=label2id
-    )
+    model_name,
+    num_labels=len(label_list),
+    id2label=id2label,
+    label2id=label2id,
+    hidden_dropout_prob=0.3,
+    attention_probs_dropout_prob=0.3
+)
 
 # =========================
 # Metrics
@@ -152,7 +154,7 @@ if not os.path.exists(MODEL_DIR):
         save_strategy="epoch",
         logging_strategy="epoch",
         learning_rate=2e-5,
-        per_device_train_batch_size=8,
+        per_device_train_batch_size=16, # make it 8 if PC cannot handle
         per_device_eval_batch_size=8,
         num_train_epochs=3,
         weight_decay=0.01,
@@ -197,7 +199,7 @@ if not os.path.exists(MODEL_DIR):
             learning_rate=2e-5,
             per_device_train_batch_size=8,
             per_device_eval_batch_size=8,
-            num_train_epochs=3,
+            num_train_epochs=6,
             weight_decay=0.01,
             warmup_ratio=0.1,
             load_best_model_at_end=True,
@@ -298,13 +300,20 @@ while True:
     with torch.no_grad():
         outputs = model(**inputs)
         probs = torch.softmax(outputs.logits, dim=1)
-        confidence = float(torch.max(probs).item())
-        pred_id = int(torch.argmax(probs, dim=1).item())
+        probs_np = probs.cpu().numpy()[0]
+        sorted_probs = np.sort(probs_np)
+
+        top1 = sorted_probs[-1]
+        top2 = sorted_probs[-2] if len(sorted_probs) > 1 else 0
+        margin = top1 - top2
+
+        pred_id = int(np.argmax(probs_np))
         intent = id2label[pred_id]
+        confidence = float(top1)
 
     print(f"Predicted intent: {intent} (confidence: {confidence:.2f})")
 
-    if confidence < CONFIDENCE_THRESHOLD:
+    if confidence < CONFIDENCE_THRESHOLD or margin < 0.15:
         print("Bot: I'm not fully sure. Did you mean admission, fees, courses, timetable, or contact?")
     else:
         print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))

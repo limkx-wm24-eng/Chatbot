@@ -300,6 +300,7 @@ while True:
     with torch.no_grad():
         outputs = model(**inputs)
         probs = torch.softmax(outputs.logits, dim=1)
+
         probs_np = probs.cpu().numpy()[0]
         sorted_probs = np.sort(probs_np)
 
@@ -311,9 +312,9 @@ while True:
         intent = id2label[pred_id]
         confidence = float(top1)
 
-    print(f"Predicted intent: {intent} (confidence: {confidence:.2f})")
+    print(f"Predicted intent: {intent} (confidence: {confidence:.2f}, margin: {margin:.2f})")
 
     if confidence < CONFIDENCE_THRESHOLD or margin < 0.15:
-        print("Bot: I'm not fully sure. Did you mean admission, fees, courses, timetable, or contact?")
+        print(f"Bot: I'm not confident. Please rephrase your question.")
     else:
-        print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))
+        print("Bot:", responses.get(intent, responses["unknown"]))

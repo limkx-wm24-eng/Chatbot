@@ -58,7 +58,8 @@ responses = {
     "contact": "You can contact the university through the official email or phone number listed on the website.",
     "greeting": "Hello. How can I help you today?",
     "thanks": "You are welcome.",
-    "goodbye": "Goodbye. Have a nice day."
+    "goodbye": "Goodbye. Have a nice day.",
+    "unknown": "Sorry, I can only answer questions about admission, fees, courses, timetable, contact, greetings, thanks, and goodbye."
 }
 
 print("\nUniversity FAQ Chatbot (SVM)")
@@ -70,7 +71,13 @@ while True:
         break
 
     cleaned = clean_text(user_input)
-    intent = model.predict([cleaned])[0]
+    scores = model.decision_function([cleaned])[0]
+    best_score = scores.max()
+    intent = model.classes_[scores.argmax()]
 
+if best_score < 0.2:
+    print("Predicted intent: unknown")
+    print("Bot: Sorry, I do not understand your question.")
+else:
     print("Predicted intent:", intent)
     print("Bot:", responses.get(intent, "Sorry, I do not understand your question."))

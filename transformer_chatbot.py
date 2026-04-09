@@ -20,7 +20,7 @@ from transformers import (
 print("Running Improved Transformer Chatbot")
 
 MODEL_DIR = "final_transformer_model"
-CONFIDENCE_THRESHOLD = 0.40
+CONFIDENCE_THRESHOLD = 0.25
 
 # =========================
 # Basic cleaning
@@ -314,7 +314,15 @@ while True:
 
     print(f"Predicted intent: {intent} (confidence: {confidence:.2f}, margin: {margin:.2f})")
 
-    if confidence < CONFIDENCE_THRESHOLD or margin < 0.15:
-        print(f"Bot: I'm not confident. Please rephrase your question.")
+    # Always allow simple intents
+    if intent in ["greeting", "thanks", "goodbye"]:
+        print("Bot:", responses.get(intent))
+
+    # Low confidence → warn but still answer
+    elif confidence < CONFIDENCE_THRESHOLD:
+        print("Bot: I'm not fully sure, but this might help:")
+        print("Bot:", responses.get(intent, responses["unknown"]))
+
+    # Normal confident response
     else:
         print("Bot:", responses.get(intent, responses["unknown"]))

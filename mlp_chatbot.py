@@ -77,20 +77,25 @@ print(classification_report(y_test, y_pred, zero_division=0))
 
 # Response bank
 responses = {
-    "admission": "You can apply through the university admission portal and submit the required documents.",
-    "fees": "You can check tuition fees and payment deadlines through the finance office or the student portal. Please refer to the latest fee schedule.",
-    "courses": "The university offers programmes such as IT, Business, and other diploma or degree courses.",
-    "timetable": "You can view your class timetable through the student portal.",
-    "contact": "You can contact the university through the official email or phone number listed on the website.",
-    "greeting": "Hello. How can I help you today?",
-    "thanks": "You are welcome.",
-    "goodbye": "Goodbye. Have a nice day.",
-    "unknown": "Sorry, I am not confident about your question. You can ask about admission, fees, courses, timetable, or contact. Try asking in a simpler sentence.",
-    "about_university": "Tunku Abdul Rahman University of Management and Technology (TAR UMT) is a leading private university in Malaysia, known for its strong focus on academic excellence and industry-relevant programmes.",
-    "history": "TAR UMT was established in 1969 as Tunku Abdul Rahman College before being upgraded to a university college and later a full university.",
-    "location":  "The main campus of TAR UMT is located in Kuala Lumpur, Malaysia.",
-    "facilities":  "The university provides facilities such as libraries, computer labs, lecture halls, and student activity areas.",
-    "career": "The university provides career support such as internships and job placement assistance."
+    "admission": "You can apply online through the TARUMT website. There are multiple intakes such as January, May/June, and September. Make sure to prepare your required documents.",
+    "fees": "Tuition fees at TARUMT vary depending on the programme. Generally, diploma and degree fees range from about RM18,000 to RM44,000. You should check the latest fee structure for your course.",
+    "program": "TARUMT offers a wide range of programmes including diploma, degree, and postgraduate courses in fields such as business, IT, engineering, and science.",
+    "courses": "You can study programmes like Information Technology, Business, Engineering, and many others at TARUMT.",
+    "timetable": "You can view your timetable through the TARUMT student portal after registration.",
+    "contact": "You can contact TARUMT through their official website, email, or hotline for more information.",
+    "greeting": "Hello! How can I assist you today?",
+    "thanks": "You're welcome! Feel free to ask anything else.",
+    "goodbye": "Goodbye! Have a great day.",
+    "unknown": "Sorry, I am not sure about that. You can ask about TARUMT admission, fees, courses, or student life.",
+    "general": "TARUMT is a well-known private university in Malaysia offering affordable and quality education since 1969.",
+    "about_university": "TARUMT (Tunku Abdul Rahman University of Management and Technology) is a leading private university in Malaysia known for its affordability and strong academic programmes.",
+    "history": "TARUMT was established in 1969 and has grown into a reputable university offering various programmes.",
+    "location": "The main campus of TARUMT is located in Setapak, Kuala Lumpur.",
+    "facility": "TARUMT provides facilities such as libraries, computer labs, WiFi, sports facilities, and student accommodation.",
+    "student_life": "Student life at TARUMT is vibrant with many clubs, societies, and events for students to join.",
+    "career": "TARUMT supports students with internships, career guidance, and job placement opportunities.",
+    "international": "TARUMT welcomes international students and provides support services including visa assistance and orientation.",
+    "scholarship": "TARUMT offers scholarships and financial aid based on academic performance, including up to full tuition fee waivers."
 }
 
 def detect_small_talk(user_input: str): 

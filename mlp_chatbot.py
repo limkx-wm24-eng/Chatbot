@@ -86,14 +86,14 @@ responses = {
     "thanks": "You're welcome! Feel free to ask anything else.",
     "goodbye": "Goodbye! Have a great day.",
     "unknown": "Sorry, I am not sure about that. You can ask about TARUMT admission, fees, courses, facilities, timetable, scholarships, or student life.",
-    "general": "TARUMT is a well-known private university in Malaysia that offers affordable and quality education. Its main campus is located in Setapak, Kuala Lumpur.",
+    "general": "TARUMT is a well-known private university in Malaysia that offers affordable and quality education. Its main campus is located in Setapak, Kuala Lumpur.They are exceeding 34,000 studying in TARUMT",
     "facility": "TARUMT provides facilities such as libraries, computer labs, WiFi, sports facilities, study areas, cafeterias, and student accommodation.",
     "student_life": "Student life at TARUMT is vibrant, with clubs, societies, events, sports, and various campus activities for students to join.",
     "international": "TARUMT welcomes international students and provides support services such as admission guidance, visa-related assistance, and orientation support.",
     "scholarship": "TARUMT offers scholarships and financial aid based on academic performance, including merit-based support and possible tuition fee waivers."
 }
 
-def detect_small_talk(user_input: str): 
+def detect_small_talk(user_input: str):
     text = clean_text(user_input)
 
     greeting_words = ["hi", "hello", "hey"]
@@ -120,6 +120,7 @@ def detect_small_talk(user_input: str):
 
     return None
 
+
 THRESHOLD = 0.45
 
 print("\nUniversity FAQ Chatbot (MLP)")
@@ -132,21 +133,51 @@ while True:
 
     cleaned = clean_text(user_input)
     small_talk_intent = detect_small_talk(user_input)
-    
+
+    location_keywords = [
+        "where is tarumt",
+        "tarumt location",
+        "main campus",
+        "campus located",
+        "located in",
+        "setapak",
+        "kuala lumpur",
+        "where is the university",
+        "where is the campus",
+        "location of tarumt"
+    ]
+
+    if any(keyword in cleaned for keyword in location_keywords):
+        print("Predicted intent: general")
+        print("Bot:", responses["general"])
+        continue
+
+    student_keywords = [
+        "how many student",
+        "number of student",
+        "total student",
+        "student population"
+    ]
+
+    if any(keyword in cleaned for keyword in student_keywords):
+        print("Predicted intent: general")
+        print("Bot:", responses["general"])
+        continue
+
     if small_talk_intent:
         print("Predicted intent:", small_talk_intent)
         print("Bot:", responses[small_talk_intent])
         continue
 
     probs = model.predict_proba([cleaned])[0]
-    sorted_idx=probs.argsort()[::-1]
+    sorted_idx = probs.argsort()[::-1]
 
     best_index = sorted_idx[0]
     second_index = sorted_idx[1]
 
     best_score = probs[best_index]
     second_score = probs[second_index]
-    gap= best_score - second_score
+    gap = best_score - second_score
 
     intent = model.classes_[best_index]
     second_intent = model.classes_[second_index]

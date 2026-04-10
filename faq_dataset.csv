@@ -26,7 +26,7 @@ How do I know if I paid successfully?,fees
 Greetings,greeting
 I will come back soon,goodbye
 I will go now,goodbye
-Are business programmes available?,courses
+Are business coursesmes available?,courses
 Can you explain the admission process?,admission
 What is the official email address?,contact
 "Hey, wishing you a great day",greeting
@@ -41,7 +41,7 @@ Can I download my class timetable?,timetable
 Can I apply this semester?,admission
 How do I submit an enquiry?,contact
 Thank you for the quick help,thanks
-Are there full-time programmes?,courses
+Are there full-time coursesmes?,courses
 Can I contact online?,contact
 Goodbye until later,goodbye
 Say something funny,unknown
@@ -95,7 +95,7 @@ I appreciate your help today,thanks
 Can I pay fees using credit card?,fees
 Do you have short courses?,courses
 Do you offer diploma in IT?,courses
-What are trending programmes?,courses
+What are trending coursesmes?,courses
 Can I find my timetable on the system?,timetable
 "Thanks, I learned something new",thanks
 Where is the university office?,contact
@@ -106,12 +106,12 @@ How do I contact through social media?,contact
 "Hi, friendly greetings",greeting
 How do I check my fee balance?,fees
 Will it be hot today?,unknown
-How do I select a programme?,courses
+How do I select a coursesme?,courses
 Do ghosts exist?,unknown
 "Thanks, catch you later",goodbye
 Can I take computing courses?,courses
 Good day,greeting
-Are there any diploma programmes?,courses
+Are there any diploma coursesmes?,courses
 Please tell me what courses are available,courses
 "Hi, I am back",greeting
 Hey everyone,greeting
@@ -193,7 +193,7 @@ Goodbye bot,goodbye
 Where do I apply for courses?,admission
 How do I pay fees from another country?,fees
 Thank you for giving me details,thanks
-What degree programmes are available?,courses
+What degree coursesmes are available?,courses
 Where can I check my remaining balance?,fees
 Where do I find my class times?,timetable
 What should I buy for dinner?,unknown
@@ -268,7 +268,7 @@ What is the process to change courses?,courses
 What is my destiny?,unknown
 "Hey, I'm here",greeting
 Turn off the lights,unknown
-What programmes are offered here?,courses
+What coursesmes are offered here?,courses
 How do I learn more about courses?,courses
 Do you offer skill-based courses?,courses
 Thank you for the explanation,thanks
@@ -313,7 +313,7 @@ Who handles class schedule enquiries?,contact
 Open YouTube for me,unknown
 Do you have business courses?,courses
 Where do new students pay fees?,fees
-Can you show me available degree programmes?,courses
+Can you show me available degree coursesmes?,courses
 How do I apply step by step?,admission
 How do I apply for admission online step by step?,admission
 Can you guide me through admission?,admission
@@ -342,7 +342,7 @@ How do I check if my timetable has changed?,timetable
 I want to check my fee balance,fees
 "See you, have a nice evening",goodbye
 What time do my classes start?,timetable
-Do you offer specialized programmes?,courses
+Do you offer specialized coursesmes?,courses
 What is the population of China?,unknown
 "Hello, I just entered",greeting
 Please list all courses,courses
@@ -433,7 +433,7 @@ Can I study artificial intelligence?,courses
 Bye chatbot,goodbye
 How do I complete the admission registration?,admission
 Can timetable be updated?,timetable
-Are there IT programmes available?,courses
+Are there IT coursesmes available?,courses
 Can you entertain me?,unknown
 Which course is best for me?,courses
 What is a prime number?,unknown
@@ -442,7 +442,7 @@ How can I get accepted?,admission
 What is the easiest way to pay fees?,fees
 What should I do after payment?,fees
 What are the payment options?,fees
-What programmes do you have?,courses
+What coursesmes do you have?,courses
 What courses are best for future jobs?,courses
 How do I confirm my tuition payment?,fees
 "Hey, how is your day?",greeting
@@ -491,8 +491,8 @@ Can you help with calculus?,unknown
 What if I miss the payment deadline?,fees
 Can you check Apple stock?,unknown
 How do I contact help desk?,contact
-Can you show me the available programmes?,courses
-How do I change my programme?,courses
+Can you show me the available coursesmes?,courses
+How do I change my coursesme?,courses
 How do I make a payment online?,fees
 Can I enroll in this university?,admission
 What courses are trending now?,courses
@@ -504,7 +504,7 @@ Can I check my tuition fees online?,fees
 How do I open my timetable?,timetable
 "Thank you, that was helpful",thanks
 "Hey, I just arrived",greeting
-I need information about programmes,courses
+I need information about coursesmes,courses
 "Thanks, this is helpful",thanks
 "Thank you, catch you later",goodbye
 What are the study options?,courses
@@ -551,7 +551,7 @@ How do I join the university?,admission
 Many thanks,thanks
 Is there an app for timetable?,timetable
 "Thank you, much appreciated",thanks
-How do I apply for degree programs?,admission
+How do I apply for degree coursess?,admission
 How do I pay my tuition online?,fees
 What is the office address?,contact
 How can I join as a new student?,admission
@@ -565,7 +565,7 @@ Thanks for taking the time to help,thanks
 Can you call my friend?,unknown
 What courses are flexible?,courses
 I want to contact the university,contact
-What programmes can I choose?,courses
+What coursesmes can I choose?,courses
 What is contact for international students?,contact
 "Farewell, catch you later",goodbye
 I will talk again later,goodbye
@@ -619,7 +619,7 @@ Thanks for sharing the information,thanks
 "Okay, ending chat, goodbye",goodbye
 When can I reach staff?,contact
 Where can I get admission application details?,admission
-Can I get full programme details?,courses
+Can I get full coursesme details?,courses
 How do I pay fees as a new student?,fees
 I want to know how to apply,admission
 What do I need to register?,admission
@@ -651,7 +651,7 @@ How can I enter this university?,admission
 "See you later, goodbye",goodbye
 How do I reach the admin office?,contact
 Can I call admission office?,contact
-What are the programme requirements?,courses
+What are the coursesme requirements?,courses
 How much should I pay this semester?,fees
 Can you send an email?,unknown
 "See you later, talk soon",goodbye
@@ -681,7 +681,7 @@ When can I call the office?,contact
 Where do international students ask?,contact
 Are postgraduate courses available?,courses
 How do I view future classes?,timetable
-I am interested in your programmes,courses
+I am interested in your coursesmes,courses
 How do I apply for the upcoming intake?,admission
 How can I check my daily class schedule?,timetable
 Hi,greeting
@@ -725,7 +725,7 @@ What IT subjects are available?,courses
 "See you later, take care",goodbye
 How far is Kuala Lumpur from Penang?,unknown
 Thanks for the quick help,thanks
-What programmes are open for enrollment?,courses
+What coursesmes are open for enrollment?,courses
 "Goodbye, see you soon",goodbye
 "Goodbye, talk soon",goodbye
 "Thank you, this is helpful",thanks
@@ -744,7 +744,7 @@ Where can I ask questions?,contact
 Hi again,greeting
 I want to reach student services,contact
 Where do I contact for payment issues?,contact
-How can I enroll in a program?,admission
+How can I enroll in a courses?,admission
 What is the capital of France?,unknown
 Can I study marketing?,courses
 What is the enrollment requirement?,admission
@@ -762,7 +762,7 @@ Do I need an umbrella today?,unknown
 Can I request fee extension?,fees
 Can I view my timetable for all subjects?,timetable
 See you later tonight,goodbye
-Can I see the full list of programmes?,courses
+Can I see the full list of coursesmes?,courses
 "Bye, see you soon",goodbye
 Can you predict my life?,unknown
 What is the admission process?,admission
@@ -787,7 +787,7 @@ Thank you for your time,thanks
 Do you offer part-time courses?,courses
 "Thank you, bye",goodbye
 When will I receive my timetable?,timetable
-What subjects are included in your programmes?,courses
+What subjects are included in your coursesmes?,courses
 Thanks for responding,thanks
 Thanks for the help today,thanks
 Thank you for the information provided,thanks
@@ -802,7 +802,7 @@ Thanks for your support today,thanks
 Can you recommend a restaurant?,unknown
 "Thank you, appreciate your support",thanks
 What is the temperature outside?,unknown
-What programmes are popular among students?,courses
+What coursesmes are popular among students?,courses
 How much do I need to pay?,fees
 Can I view schedule by subject?,timetable
 How do I contact the registrar?,contact
@@ -828,12 +828,12 @@ How can I check my timetable?,timetable
 What is the total fee amount?,fees
 Can I order pizza here?,unknown
 Are there certificate courses?,courses
-What are the available programmes?,courses
+What are the available coursesmes?,courses
 When is the application closing date?,admission
 I want to choose a course,courses
 "Hey, greetings",greeting
 Do you know any jokes?,unknown
-Can you recommend a programme?,courses
+Can you recommend a coursesme?,courses
 How do I access timetable from the portal?,timetable
 What are the requirements for applying?,admission
 What happens if I pay late?,fees
@@ -858,7 +858,7 @@ Hey there again,greeting
 What documents do I need?,admission
 What time can I contact?,contact
 "Hello, long time no see",greeting
-Can I take multiple programmes?,courses
+Can I take multiple coursesmes?,courses
 Who is the best football player?,unknown
 Thanks a million,thanks
 How can I view my outstanding fees?,fees
@@ -930,13 +930,13 @@ What should I do to enroll?,admission
 "Hello, I'm here",greeting
 Where do I ask for help?,contact
 What can I study here?,courses
-I need help choosing a programme,courses
+I need help choosing a coursesme,courses
 How do I check if my fees are paid?,fees
 Can I contact billing office?,contact
 How can I submit my form?,admission
 Can I check my class plan for the week?,timetable
 "Thanks, I am satisfied",thanks
-Do you offer business programmes?,courses
+Do you offer business coursesmes?,courses
 Can I log in to check timetable anywhere?,timetable
 "Hi, how is it going?",greeting
 Where do I confirm payment?,fees
@@ -971,7 +971,7 @@ What courses are suitable for beginners?,courses
 "Thanks, bye for now",goodbye
 Is the economy getting better?,unknown
 "Thank you, see you later",goodbye
-Which programmes can I study?,courses
+Which coursesmes can I study?,courses
 Can you guide me on courses?,courses
 How can I get course details?,courses
 Can I enroll today?,admission
@@ -983,7 +983,7 @@ Can I call finance office?,contact
 Thank you again,thanks
 How do I confirm my payment?,fees
 Can I register online?,admission
-What programmes can I join this semester?,courses
+What coursesmes can I join this semester?,courses
 Where do I make fee payment?,fees
 "Thanks, have a nice day",thanks
 Hello assistant,greeting
@@ -1037,7 +1037,7 @@ Talk soon,goodbye
 "Thank you, bye",thanks
 Is there extra charge for international payment?,fees
 Where can I apply for admission?,admission
-Do you offer advanced programmes?,courses
+Do you offer advanced coursesmes?,courses
 Where do I check my lecture schedule online?,timetable
 Can I change my course later?,courses
 How do I choose a course?,courses
@@ -1071,7 +1071,7 @@ Talk to you later,goodbye
 How do I register as a new student?,admission
 "Alright, I am done, goodbye",goodbye
 What is the payment process?,fees
-Do you have science programmes?,courses
+Do you have science coursesmes?,courses
 Can I contact via email?,contact
 "Thanks, goodbye",goodbye
 Good evening again,greeting
@@ -1088,7 +1088,7 @@ Where do I see my subject timetable?,timetable
 How do I write to the university?,contact
 How do I see my timetable for this month?,timetable
 Is it raining now?,unknown
-Can I choose a different programme later?,courses
+Can I choose a different coursesme later?,courses
 "Thanks, really appreciate it",thanks
 "Thank you, take care",thanks
 "Good evening, can you assist me?",greeting
@@ -1147,7 +1147,7 @@ Where can I see my timetable updates?,timetable
 Where do I download my schedule?,timetable
 Where can I see my fee statement?,fees
 Thank you for your help,thanks
-What programmes are suitable for working students?,courses
+What coursesmes are suitable for working students?,courses
 What are the steps to enroll?,admission
 How do I complete the admission steps?,admission
 Thanks once again,thanks
@@ -1216,7 +1216,7 @@ What courses are suitable for my interest?,courses
 How do I know what classes I have?,timetable
 What is finance phone number?,contact
 When should I apply?,admission
-Where can I find programme information?,courses
+Where can I find coursesme information?,courses
 See you again today,goodbye
 Can you make me laugh?,unknown
 Can you tell my future?,unknown
@@ -1230,7 +1230,7 @@ Can I study business management?,courses
 "Hi, how are you?",greeting
 How is the weather today?,unknown
 See you next time again,goodbye
-Can you recommend popular programmes?,courses
+Can you recommend popular coursesmes?,courses
 How do I contact information desk?,contact
 How do I access my weekly schedule?,timetable
 How do I get a copy of my timetable?,timetable
@@ -1319,9 +1319,9 @@ Can I pay fees using my phone?,fees
 Thank you assistant,thanks
 "Thanks, see you soon",goodbye
 "Catch you later, talk soon",goodbye
-How do I enroll in a programme?,admission
+How do I enroll in a coursesme?,admission
 "Hello, I just joined",greeting
-What happens if I change programmes?,courses
+What happens if I change coursesmes?,courses
 Can I pay fees through online banking?,fees
 Thanks for your time,thanks
 Thank you for your support today,thanks
@@ -1335,7 +1335,7 @@ I want to register as a student,admission
 How do I reach admission department?,contact
 How do I access course details?,courses
 Can I contact via WhatsApp?,contact
-What programmes are currently available?,courses
+What coursesmes are currently available?,courses
 Can international students choose any course?,courses
 What is the payment method for new students?,fees
 How do I know if class time changes?,timetable
@@ -1348,7 +1348,7 @@ Please tell me how to apply,admission
 Where is my timetable?,timetable
 "Thanks, I understand now",thanks
 Is there a penalty for late payment?,fees
-What programmes can I apply for?,courses
+What coursesmes can I apply for?,courses
 How do I reach by telephone?,contact
 "Goodbye, stay safe",goodbye
 Where can I find support contact?,contact
@@ -1390,7 +1390,7 @@ Where is the support office?,contact
 Is admission open now?,admission
 Where is student support?,contact
 How do I avoid penalty charges?,fees
-Are there beginner-friendly programmes?,courses
+Are there beginner-friendly coursesmes?,courses
 Can you help me pack for travel?,unknown
 How do international students contact?,contact
 "Hi, nice to meet you",greeting
@@ -1398,7 +1398,7 @@ Is admission available online?,admission
 Goodbye for today,goodbye
 How do I see my timetable online?,timetable
 "Hey, all good?",greeting
-When is my programming class?,timetable
+When is my coursesming class?,timetable
 How can I avoid late fees?,fees
 What is the exchange rate today?,unknown
 "Goodbye, that is all for now",goodbye
@@ -1429,7 +1429,7 @@ What is required for application?,admission
 What is my lecture timetable?,timetable
 What movies do you like?,unknown
 What do I need for enrollment?,admission
-What academic programmes are available?,courses
+What academic coursesmes are available?,courses
 How do I check schedule updates?,timetable
 Can I switch courses after enrolling?,courses
 How can I become a student here?,admission
@@ -1495,39 +1495,39 @@ how do i settle outstanding fees,fees
 what is included in the tuition fee,fees
 can i pay through online banking,fees
 when should i complete fee payment,fees
-how much are the program charges,fees
+how much are the courses charges,fees
 where do i check the payment deadline,fees
 can i ask for a fee summary,fees
 how do i confirm my tuition payment,fees
-what programs are available this year,courses
+what coursess are available this year,courses
 which diploma courses can i choose,courses
-do you have business programs,courses
+do you have business coursess,courses
 what majors does the university offer,courses
 can i study information technology here,courses
 what course options are open for intake,courses
-which programs are suitable for new students,courses
+which coursess are suitable for new students,courses
 do you offer computer science degree,courses
 what can i study at this university,courses
 are there any accounting courses available,courses
 which faculty offers it courses,courses
-can you show me the list of programs,courses
-what diploma programs do you have,courses
+can you show me the list of coursess,courses
+what diploma coursess do you have,courses
 are there any postgraduate courses,courses
 what are the available degree options,courses
 do you offer short courses,courses
 which business course is available,courses
 can i see the course catalog,courses
-what subjects are included in it program,courses
+what subjects are included in it courses,courses
 is there a diploma in business,courses
-what engineering programs are available,courses
+what engineering coursess are available,courses
 do you have software related courses,courses
 what are the top courses offered,courses
-where can i browse all programs,courses
+where can i browse all coursess,courses
 can i compare different courses,courses
 which course is best for computing,courses
 do you offer data science course,courses
 what are the course entry options,courses
-how do i choose a program,courses
+how do i choose a courses,courses
 is there a list of available majors,courses
 where can i check my class times,timetable
 how do i open my timetable online,timetable
@@ -1695,7 +1695,7 @@ when need pay fees,fees
 payment deadline when,fees
 how much per semester,fees
 what course available,courses
-what programme got,courses
+what coursesme got,courses
 what can i study here,courses
 got IT course or not,courses
 got business course,courses
@@ -1796,8 +1796,8 @@ is ptptn available,fees
 what is the registration fee,fees
 what course do you offer,courses
 what courses are available,courses
-what programme do you offer,courses
-what programs do you have,courses
+what coursesme do you offer,courses
+what coursess do you have,courses
 what can i study here,courses
 is there it course,courses
 do you offer diploma,courses
@@ -1805,7 +1805,7 @@ do you offer degree,courses
 what business course do you have,courses
 what subject can i take,courses
 course list please,courses
-can you show me your programmes,courses
+can you show me your coursesmes,courses
 what faculty is available,courses
 is computer science available,courses
 what are the available courses,courses
@@ -1879,27 +1879,20 @@ course price,fees
 price for diploma,fees
 fee amount,fees
 how much should i pay,fees
-tell me about tar university,about_university
-what is tar umt,about_university
-tar university background,about_university
-about tar umt,about_university
-introduce tar university,about_university
-what is this university,about_university
-history of tar umt,history
-when was tar established,history
-background of tar college,history
-tar university history,history
-where is tar umt,location
-tar umt location,location
-where is the campus,location
-which city is tar in,location
-what facilities does tar have,facilities
-what can students use in campus,facilities
-library and labs available,facilities
-what facilities provided,facilities
-job opportunities after tar,career
-is tar good for job,career
-career support tar umt,career
+tell me about tar university,general
+what is tar umt,general
+tar university background,general
+about tar umt,general
+introduce tar university,general
+what is this university,general
+where is tar umt,general
+tar umt location,general
+where is the campus,general
+which city is tar in,general
+what facility does tar have,facility
+what can students use in campus,facility
+library and labs available,facility
+what facility provided,facility
 Where is TARUMT located?,general
 Is TARUMT a private university?,general
 What does TARUMT stand for?,general
@@ -1917,15 +1910,15 @@ What intake does TARUMT have?,admission
 Does TARUMT have multiple intakes?,admission
 What documents are required for admission?,admission
 How do I register as a new student?,admission
-What courses are available?,program
-What can I study at TARUMT?,program
-Does TARUMT offer diploma?,program
-Does TARUMT offer degree?,program
-How long is diploma?,program
-How long is degree?,program
-Is there foundation program?,program
-How long is foundation?,program
-What major can I take?,program
+What courses are available?,courses
+What can I study at TARUMT?,courses
+Does TARUMT offer diploma?,courses
+Does TARUMT offer degree?,courses
+How long is diploma?,courses
+How long is degree?,courses
+Is there foundation courses?,courses
+How long is foundation?,courses
+What major can I take?,courses
 How much is tuition fee?,fees
 How much are TARUMT fees?,fees
 Is TARUMT expensive?,fees
@@ -1943,7 +1936,7 @@ Can I get full scholarship?,scholarship
 What are scholarship requirements?,scholarship
 Is hostel available?,facility
 Does TARUMT have hostel?,facility
-What facilities are available?,facility
+What facility are available?,facility
 Does TARUMT have library?,facility
 Is there wifi on campus?,facility
 Is there cafeteria?,facility
@@ -1981,11 +1974,11 @@ tuition fee how much,fees
 how much to pay,fees
 payment method what,fees
 can pay installment,fees
-what course available,program
-what programme got,program
-got IT course,program
-got business course,program
-what subject can take,program
+what course available,courses
+what coursesme got,courses
+got IT course,courses
+got business course,courses
+what subject can take,courses
 timetable where,timetable
 how to check timetable,timetable
 where is class schedule,timetable
@@ -2009,15 +2002,15 @@ How long does application process take?,admission
 Can I apply without full results?,admission
 Do I need interview?,admission
 Can I change course after applying?,admission
-What faculty does TARUMT have?,program
-Does TARUMT offer IT courses?,program
-Does TARUMT offer engineering?,program
-Does TARUMT offer business courses?,program
-Are there postgraduate programs?,program
-Can I study computer science?,program
-Can I study accounting?,program
-Can I study engineering?,program
-What is the duration of courses?,program
+What faculty does TARUMT have?,courses
+Does TARUMT offer IT courses?,courses
+Does TARUMT offer engineering?,courses
+Does TARUMT offer business courses?,courses
+Are there postgraduate coursess?,courses
+Can I study computer science?,courses
+Can I study accounting?,courses
+Can I study engineering?,courses
+What is the duration of courses?,courses
 Are TARUMT fees affordable?,fees
 Is TARUMT cheaper than other universities?,fees
 What is the payment deadline?,fees
@@ -2090,11 +2083,11 @@ is tuition high,fees
 how much total cost,fees
 can i pay later,fees
 can split payment,fees
-what course easy,program
-which course popular,program
-which course best,program
-what should i study,program
-course recommendation,program
+what course easy,courses
+which course popular,courses
+which course best,courses
+what should i study,courses
+course recommendation,courses
 hostel near tarumt,facility
 where to stay,facility
 can rent outside,facility
@@ -2109,4 +2102,177 @@ international apply tarumt,international
 visa process tarumt,international
 study malaysia tarumt,international
 english test needed,international
-ielts required tarumt,international
+What coursess does TARUMT offer?,courses
+What degree courses are available?,courses
+Does TARUMT offer engineering coursess?,courses
+Does TARUMT have IT courses?,courses
+What are the study options?,courses
+Can I study computer science?,courses
+Can I take business courses?,courses
+What courses can I enroll in?,courses
+What diploma coursess are available?,courses
+Does TARUMT offer foundation courses?,courses
+Can I study accounting?,courses
+Is there software engineering courses?,courses
+Can I study marketing?,courses
+Are there science coursess?,courses
+Is there finance course?,courses
+Does TARUMT have good facility?,facility
+What facility are available on campus?,facility
+Is there computer lab?,facility
+Are there study areas?,facility
+Does TARUMT have sports facility?,facility
+Is there a gym?,facility
+Are there lecture halls?,facility
+Is there WiFi access?,facility
+Does TARUMT have parking?,facility
+Is there cafeteria on campus?,facility
+Are there labs for students?,facility
+Is there library access?,facility
+Can students use campus facility?,facility
+Is campus well equipped?,facility
+Is student life active?,student_life
+What activities are available?,student_life
+Can I join student clubs?,student_life
+Are there student societies?,student_life
+Can I join events?,student_life
+Are there competitions?,student_life
+Is campus life fun?,student_life
+Can I make friends easily?,student_life
+Are there student coursess?,student_life
+Is there orientation for students?,student_life
+What do students do in TARUMT?,student_life
+Is campus environment friendly?,student_life
+Are there extracurricular activities?,student_life
+What is TARUMT?,general
+Tell me about TARUMT, general
+Is TARUMT a good university?,general
+Why choose TARUMT?,general
+Is TARUMT well known?,general
+Is TARUMT reputable?,general
+What makes TARUMT special?,general
+Is TARUMT worth studying?,general
+What is TARUMT famous for?,general
+Why study at TARUMT?,general
+Can international students apply?,international
+Is TARUMT open for foreigners?,international
+What are international requirements?,international
+Do I need visa?,international
+Is English required?,international
+What English test needed?,international
+Do international students pay more?,international
+Is IELTS required?,international
+Can I study as foreign student?,international
+What support for international students?,international
+Are there scholarships available?,scholarship
+Can I apply for scholarship?,scholarship
+Is there financial aid?,scholarship
+How to get scholarship?,scholarship
+Is scholarship based on results?,scholarship
+Can I get full scholarship?,scholarship
+Does TARUMT offer funding?,scholarship
+Are there tuition waivers?,scholarship
+Can I get study loan?,scholarship
+Is PTPTN available?,scholarship
+What is TARUMT about?,general
+Tell me about TARUMT university,general
+What kind of university is TARUMT?,general
+Give me info about TARUMT,general
+What does TARUMT do?,general
+Describe TARUMT,general
+What facility does TARUMT provide?,facility
+List TARUMT facility,facility
+What services are available?,facility
+What resources does TARUMT have?,facility
+What campus services exist?,facility
+what courses does tarumt offer,courses
+what coursess available,courses
+what can i study,courses
+can i study it,courses
+can i study engineering,courses
+can i study business,courses
+what degree options,courses
+what diploma options,courses
+what foundation courses,courses
+what majors available,courses
+which course is best,courses
+recommend course,courses
+what subject can take,courses
+what field can study,courses
+is there computing course,courses
+is there finance course,courses
+is there marketing course,courses
+does tarumt have wifi,facility
+is wifi available,facility
+does campus have internet,facility
+is there library,facility
+can i use library,facility
+are there labs,facility
+is there computer lab,facility
+is there study area,facility
+are there classrooms,facility
+is campus big,facility
+is there sports complex,facility
+is there gym,facility
+is parking available,facility
+is there cafeteria,facility
+food available campus,facility
+where can i eat,facility
+is student life fun,student_life
+what activities available,student_life
+can i join club,student_life
+are there societies,student_life
+can i join events,student_life
+is campus life good,student_life
+are there competitions,student_life
+can i make friends,student_life
+is environment friendly,student_life
+do students enjoy campus,student_life
+what can students do,student_life
+are there extracurricular activities,student_life
+what is tarumt,general
+tell me about tarumt,general
+is tarumt good,general
+why tarumt,general
+is tarumt famous,general
+is tarumt reputable,general
+is tarumt worth it,general
+what makes tarumt special,general
+why study tarumt,general
+is tarumt well known,general
+international student apply,international
+can foreigner apply,international
+do i need visa,international
+is visa required,international
+what is visa process,international
+do international pay more,international
+is english required,international
+ielts required,international
+study in malaysia tarumt,international
+international requirement,international
+scholarship available,scholarship
+can apply scholarship,scholarship
+how get scholarship,scholarship
+is there financial aid,scholarship
+can get full scholarship,scholarship
+is ptptn available,scholarship
+loan available,scholarship
+tuition waiver possible,scholarship
+funding available,scholarship
+how apply financial aid,scholarship
+how check timetable,timetable
+where see timetable,timetable
+when is class,timetable
+how see schedule,timetable
+how login portal,timetable
+class timetable where,timetable
+schedule check how,timetable
+when class start,timetable
+contact tarumt,contact
+tarumt phone,contact
+tarumt email,contact
+who to contact,contact
+office contact,contact
+how call tarumt,contact
+support contact,contact
+help desk tarumt,contact

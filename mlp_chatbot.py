@@ -85,10 +85,15 @@ responses = {
     "greeting": "Hello. How can I help you today?",
     "thanks": "You are welcome.",
     "goodbye": "Goodbye. Have a nice day.",
-    "unknown": "Sorry, I am not confident about your question. You can ask about admission, fees, courses, timetable, or contact. Try asking in a simpler sentence."
+    "unknown": "Sorry, I am not confident about your question. You can ask about admission, fees, courses, timetable, or contact. Try asking in a simpler sentence.",
+    "about_university": "Tunku Abdul Rahman University of Management and Technology (TAR UMT) is a leading private university in Malaysia, known for its strong focus on academic excellence and industry-relevant programmes.",
+    "history": "TAR UMT was established in 1969 as Tunku Abdul Rahman College before being upgraded to a university college and later a full university.",
+    "location":  "The main campus of TAR UMT is located in Kuala Lumpur, Malaysia.",
+    "facilities":  "The university provides facilities such as libraries, computer labs, lecture halls, and student activity areas.",
+    "career": "The university provides career support such as internships and job placement assistance."
 }
 
-def detect_small_talk(user_input: str):
+def detect_small_talk(user_input: str): 
     text = clean_text(user_input)
 
     greeting_words = ["hi", "hello", "hey"]

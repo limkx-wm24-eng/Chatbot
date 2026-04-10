@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import string
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -29,6 +30,8 @@ df = df[(df["text"] != "") & (df["intent"] != "")]
 # Clean text
 df["text"] = df["text"].apply(clean_text)
 
+# Remove unknown class from training
+df = df[~df["intent"].isin(["unknown", "greeting", "thanks", "goodbye"])].copy()
 X = df["text"]
 y = df["intent"]
 
@@ -44,19 +47,28 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Pipeline
 model = Pipeline([
-    ("tfidf", TfidfVectorizer(stop_words="english", ngram_range=(1, 2))),
+        ("tfidf", TfidfVectorizer(
+        stop_words="english",
+        ngram_range=(1, 2),
+        min_df=2,
+        max_df=0.95,
+        sublinear_tf=True
+    )),
     ("clf", MLPClassifier(
-        hidden_layer_sizes=(100,),
+        hidden_layer_sizes=(128,64),
         activation="relu",
         solver="adam",
-        max_iter=500,
+        alpha=0.0005,
+        learning_rate_init=0.001,
+        max_iter=800,
         random_state=42,
-        early_stopping=True
+        early_stopping=False
     ))
 ])
 
 # Train
 model.fit(X_train, y_train)
+joblib.dump(model, "mlp_chatbot_model.pkl")
 
 # Evaluate
 y_pred = model.predict(X_test)
@@ -66,17 +78,44 @@ print(classification_report(y_test, y_pred, zero_division=0))
 # Response bank
 responses = {
     "admission": "You can apply through the university admission portal and submit the required documents.",
-    "fees": "You can check tuition fees and payment deadlines through the finance office or student portal.",
+    "fees": "You can check tuition fees and payment deadlines through the finance office or the student portal. Please refer to the latest fee schedule.",
     "courses": "The university offers programmes such as IT, Business, and other diploma or degree courses.",
     "timetable": "You can view your class timetable through the student portal.",
     "contact": "You can contact the university through the official email or phone number listed on the website.",
     "greeting": "Hello. How can I help you today?",
     "thanks": "You are welcome.",
     "goodbye": "Goodbye. Have a nice day.",
-    "unknown": "Sorry, I can only answer questions about admission, fees, courses, timetable, contact, greetings, thanks, and goodbye."
+    "unknown": "Sorry, I am not confident about your question. You can ask about admission, fees, courses, timetable, or contact. Try asking in a simpler sentence."
 }
 
-THRESHOLD = 0.35
+def detect_small_talk(user_input: str):
+    text = clean_text(user_input)
+
+    greeting_words = ["hi", "hello", "hey"]
+    thanks_words = ["thanks", "thank you", "appreciate"]
+    goodbye_words = ["bye", "goodbye", "see you"]
+
+    faq_keywords = [
+        "fee", "fees", "payment", "tuition",
+        "course", "courses", "programme", "program", "diploma", "degree",
+        "apply", "admission", "register", "enroll",
+        "timetable", "schedule", "class",
+        "contact", "phone", "email", "hotline"
+    ]
+
+    has_faq = any(word in text for word in faq_keywords)
+
+    if not has_faq:
+        if any(word in text for word in greeting_words):
+            return "greeting"
+        if any(word in text for word in thanks_words):
+            return "thanks"
+        if any(word in text for word in goodbye_words):
+            return "goodbye"
+
+    return None
+
+THRESHOLD = 0.45
 
 print("\nUniversity FAQ Chatbot (MLP)")
 while True:
@@ -87,17 +126,43 @@ while True:
         break
 
     cleaned = clean_text(user_input)
+    small_talk_intent = detect_small_talk(user_input)
+    
+    if small_talk_intent:
+        print("Predicted intent:", small_talk_intent)
+        print("Bot:", responses[small_talk_intent])
+        continue
 
     probs = model.predict_proba([cleaned])[0]
-    best_index = probs.argmax()
-    best_score = probs[best_index]
-    intent = model.classes_[best_index]
+    sorted_idx=probs.argsort()[::-1]
 
-    if best_score < THRESHOLD:
+    best_index = sorted_idx[0]
+    second_index = sorted_idx[1]
+
+    best_score = probs[best_index]
+    second_score = probs[second_index]
+    gap= best_score - second_score
+
+    intent = model.classes_[best_index]
+    second_intent = model.classes_[second_index]
+
+    if best_score >= 0.75:
+        confidence_level = "High"
+    elif best_score >= 0.50:
+        confidence_level = "Medium"
+    else:
+        confidence_level = "Low"
+    print("Confidence level:", confidence_level)
+
+    if best_score < THRESHOLD or gap < 0.08:
         print("Predicted intent: unknown")
+        print("Second intent:", second_intent)
         print(f"Confidence: {best_score:.2f}")
+        print(f"Gap: {gap:.2f}")
         print("Bot:", responses["unknown"])
     else:
         print("Predicted intent:", intent)
+        print("Second intent:", second_intent)
         print(f"Confidence: {best_score:.2f}")
+        print(f"Gap: {gap:.2f}")
         print("Bot:", responses.get(intent, responses["unknown"]))

@@ -86,7 +86,7 @@ responses = {
     "thanks": "You're welcome! Feel free to ask anything else.",
     "goodbye": "Goodbye! Have a great day.",
     "unknown": "Sorry, I am not sure about that. You can ask about TARUMT admission, fees, courses, facilities, timetable, scholarships, or student life.",
-    "general": "TARUMT is a well-known private university in Malaysia that offers affordable and quality education. Its main campus is located in Setapak, Kuala Lumpur.They are exceeding 34,000 studying in TARUMT",
+    "general": "TARUMT is a well-known private university in Malaysia that offers affordable and quality education. Its main campus is located in Setapak, Kuala Lumpur.They are exceeding 34,000 studentsstudying in TARUMT",
     "facility": "TARUMT provides facilities such as libraries, computer labs, WiFi, sports facilities, study areas, cafeterias, and student accommodation.",
     "student_life": "Student life at TARUMT is vibrant, with clubs, societies, events, sports, and various campus activities for students to join.",
     "international": "TARUMT welcomes international students and provides support services such as admission guidance, visa-related assistance, and orientation support.",

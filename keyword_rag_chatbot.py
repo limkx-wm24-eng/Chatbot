@@ -13,7 +13,7 @@ class SmartKeywordRAGChatbot:
 
         self.stop_words = {
             "what", "is", "are", "the", "a", "an", "do", "does", "did", "can", "could",
-            "would", "should", "how", "when", "where", "why", "which", "who", "whom",
+            "would", "should", "how", "where", "why", "which", "who", "whom",
             "this", "that", "these", "those", "i", "you", "we", "they", "he", "she",
             "it", "my", "your", "our", "their", "to", "for", "of", "in", "on", "at",
             "by", "with", "about", "from", "and", "or", "if", "then", "than", "be",
@@ -30,7 +30,8 @@ class SmartKeywordRAGChatbot:
             "admission": {
                 "admission", "apply", "application", "register", "registration",
                 "intake", "intakes", "entry", "requirement", "requirements",
-                "document", "documents", "enroll", "enrol", "month", "months"
+                "document", "documents", "enroll", "enrol", "month", "months",
+                "january", "september", "november", "may", "june"
             },
             "fees": {
                 "fee", "fees", "tuition", "payment", "payments", "cost", "costs",
@@ -63,18 +64,23 @@ class SmartKeywordRAGChatbot:
         }
 
         self.sub_intent_rules = {
-            "programme_list": [
-                "all courses", "all programs", "all programme", "all programmes",
-                "what courses", "what programme", "what program",
-                "which courses", "which programme", "which program",
-                "courses offered", "courses available", "courses provided",
-                "programme offered", "programmes offered", "programme available",
-                "programmes available", "programme provided", "programmes provided"
+            "course_list": [
+                "what course", "what courses", "which course", "which courses",
+                "courses provided", "courses offered", "courses available",
+                "faculty", "faculties", "engineering", "information technology",
+                "business", "accounting", "field of study", "what can i study"
             ],
+            "programme_list": [
+                "what programme", "what programmes", "what program", "what programs",
+                "programme provided", "programmes provided", "program provided", "programs provided",
+                "programme offered", "programmes offered", "program offered", "programs offered",
+                "diploma", "degree", "postgraduate"
+            ],
+
             "intake_info": [
                 "when is the intake", "when are the intakes", "intake", "intakes",
                 "intake month", "intake months", "what month", "what months",
-                "new intake"
+                "new intake", "january", "may june", "september", "november"
             ],
             "admission_apply": [
                 "how to apply", "how do i apply", "application", "apply",
@@ -126,11 +132,11 @@ class SmartKeywordRAGChatbot:
     def normalize_word(self, word):
         synonym_map = {
             "course": "courses",
-            "program": "courses",
-            "programs": "courses",
-            "programme": "courses",
-            "programmes": "courses",
-            "programe": "courses",
+            "program": "programme",
+            "programs": "programme",
+            "programme": "programme",
+            "programmes": "programme",
+            "programe": "programme",
             "study": "courses",
             "studies": "courses",
             "subject": "courses",
@@ -270,9 +276,56 @@ class SmartKeywordRAGChatbot:
         if "transport" in tokens:
             return "transport_info"
 
+        intake_words = {"intake", "january", "september", "november", "may", "june"}
+        if tokens.intersection(intake_words):
+            return "intake_info"
+
+        hostel_words = {"accommodation", "hostel"}
+        if tokens.intersection(hostel_words):
+            return "hostel_info"
+
+        scholarship_words = {"scholarship", "bursary", "loan", "waiver"}
+        if tokens.intersection(scholarship_words):
+            return "scholarship_info"
+
+        fees_words = {"fees", "tuition", "payment", "cost", "price"}
+        if tokens.intersection(fees_words):
+            return "fees_detail"
+
+        contact_words = {"contact", "email", "phone", "hotline", "office"}
+        if tokens.intersection(contact_words):
+            return "contact_info"
+
+        timetable_words = {"timetable", "schedule", "calendar"}
+        if tokens.intersection(timetable_words):
+            return "timetable_info"
+
+        location_words = {"location", "address", "setapak", "kuala", "lumpur", "penang", "perak", "johor", "pahang", "sabah"}
+        if tokens.intersection(location_words):
+            return "location_info"
+
+        course_words = {
+            "courses", "course", "faculty", "faculties",
+            "engineering", "information", "technology", "business", "accounting",
+            "study", "studies", "major", "subject", "subjects"
+        }
+        if tokens.intersection(course_words):
+            return "course_list"
+
+        programme_words = {"diploma", "degree", "postgraduate", "programme", "program", "programmes", "programs"}
+        if tokens.intersection(programme_words):
+            return "programme_list"
+
+        admission_words = {"admission", "application", "apply", "register", "registration", "documents", "requirements"}
+        if tokens.intersection(admission_words):
+            return "admission_apply"
+
+        facilities_words = {"facilities", "library", "lab", "wifi", "gym", "canteen", "cafeteria"}
+        if tokens.intersection(facilities_words):
+            return "facilities_info"
+
         best_intent = None
         best_score = 0.0
-
         for sub_intent, phrases in self.sub_intent_rules.items():
             score = 0.0
             for phrase in phrases:
@@ -287,34 +340,16 @@ class SmartKeywordRAGChatbot:
         if best_score >= 0.70:
             return best_intent
 
-        if "intake" in tokens:
-            return "intake_info"
-        if "admission" in tokens and ("apply" in cleaned or "application" in cleaned or "register" in cleaned):
-            return "admission_apply"
-        if "courses" in tokens:
-            return "programme_list"
-        if "fees" in tokens:
-            return "fees_detail"
-        if "accommodation" in tokens:
-            return "hostel_info"
-        if "scholarship" in tokens:
-            return "scholarship_info"
-        if "contact" in tokens:
-            return "contact_info"
-        if "timetable" in tokens:
-            return "timetable_info"
-        if "location" in tokens:
-            return "location_info"
-        if "facilities" in tokens:
-            return "facilities_info"
-
         return None
-
+    
     def detect_question_type(self, query):
         query = self.clean_text(query)
 
         if any(x in query for x in ["how many", "number of", "total number"]):
             return "count"
+
+        if any(x in query for x in ["when", "what month", "what months"]):
+            return "time"
 
         if any(x in query for x in ["list", "show", "all", "what are", "which are"]):
             return "list"
@@ -326,7 +361,6 @@ class SmartKeywordRAGChatbot:
 
     def fuzzy_token_match_score(self, query_tokens, row_tokens):
         score = 0.0
-
         for q in query_tokens:
             best = 0.0
             for r in row_tokens:
@@ -411,6 +445,12 @@ class SmartKeywordRAGChatbot:
                 if x in combined:
                     score -= 18.0
 
+        if question_type == "time" and user_sub_intent == "intake_info":
+            if any(x in combined for x in ["january", "may", "june", "september", "november", "intake"]):
+                score += 12.0
+            if any(x in combined for x in ["graduation", "fees", "application portal", "documents"]):
+                score -= 15.0
+
         if question_type == "yesno" and user_sub_intent == "location_info":
             good = ["located", "campus", "branch", "setapak", "kuala lumpur", "penang", "perak", "johor", "pahang", "sabah"]
             bad = ["how many", "6 campuses", "total campuses", "transport", "bus", "travel", "shuttle"]
@@ -422,24 +462,38 @@ class SmartKeywordRAGChatbot:
                     score -= 12.0
 
         if user_sub_intent == "intake_info":
-            good = ["intake", "january", "may june", "september", "november", "main intake"]
-            bad = ["application portal", "required documents", "scholarship", "financial aid", "apply online"]
+            good = ["intake", "january", "may", "june", "september", "november"]
+            bad = [
+                "application portal", "required documents", "graduation",
+                "fees", "payment", "settle outstanding fees",
+                "before graduation", "hostel", "scholarship"
+            ]
             for x in good:
                 if x in combined:
-                    score += 10.0
+                    score += 15.0
             for x in bad:
                 if x in combined:
-                    score -= 12.0
+                    score -= 20.0
 
-        if user_sub_intent == "programme_list":
-            good = ["courses offered", "programmes offered", "programme available", "diploma", "degree", "postgraduate"]
-            bad = ["counselling", "placement", "application", "financial aid", "student support"]
-            for x in good:
-                if x in combined:
-                    score += 10.0
-            for x in bad:
-                if x in combined:
-                    score -= 14.0
+            if user_sub_intent == "course_list":
+                good = ["engineering", "information technology", "business", "accounting", "faculty", "faculties"]
+                bad = ["application", "financial aid", "hostel", "intake"]
+                for x in good:
+                    if x in combined:
+                        score += 10.0
+                for x in bad:
+                    if x in combined:
+                        score -= 14.0
+
+            if user_sub_intent == "programme_list":
+                good = ["diploma", "degree", "postgraduate", "programme", "program"]
+                bad = ["counselling", "placement", "application", "financial aid", "student support"]
+                for x in good:
+                    if x in combined:
+                        score += 10.0
+                for x in bad:
+                    if x in combined:
+                        score -= 14.0
 
         if user_sub_intent == "admission_apply":
             good = ["apply online", "application portal", "required documents", "official portal"]
@@ -566,6 +620,15 @@ class SmartKeywordRAGChatbot:
             sub_df = candidate_df[candidate_df["sub_intent"] == user_sub_intent]
             if not sub_df.empty:
                 candidate_df = sub_df
+            elif user_sub_intent == "intake_info":
+                intake_mask = (
+                    candidate_df["question_clean"].str.contains("intake|january|september|november|may|june", regex=True) |
+                    candidate_df["context_clean"].str.contains("intake|january|september|november|may|june", regex=True) |
+                    candidate_df["answer_clean"].str.contains("intake|january|september|november|may|june", regex=True)
+                )
+                fallback_df = candidate_df[intake_mask]
+                if not fallback_df.empty:
+                    candidate_df = fallback_df
 
         scored = []
         for _, row in candidate_df.iterrows():
@@ -601,6 +664,13 @@ class SmartKeywordRAGChatbot:
 
         best_score, best_row = ranked[0]
         answer = best_row["answer"]
+
+        query_clean = self.clean_text(user_query)
+
+        if user_sub_intent == "course_list":
+            answer = "TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+        elif user_sub_intent == "programme_list":
+            answer = "TARUMT offers Diploma, Degree and Postgraduate programmes."
 
         if question_type == "yesno":
             if branch_name:

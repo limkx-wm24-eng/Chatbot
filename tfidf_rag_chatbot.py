@@ -1,11 +1,11 @@
 import re
 import pandas as pd
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox, scrolledtext
+from tkinter import messagebox
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import requests
 import webbrowser
+from PIL import Image, ImageTk
 
 
 class TFIDFRAGChatbot:
@@ -57,9 +57,6 @@ class TFIDFRAGChatbot:
 
         self.load_data()
 
-    # =============================
-    # TEXT NORMALIZATION
-    # =============================
     def normalize_text(self, text):
         text = str(text).lower().strip()
 
@@ -113,9 +110,6 @@ class TFIDFRAGChatbot:
 
         return " ".join(words)
 
-    # =============================
-    # LOAD DATA
-    # =============================
     def load_data(self):
         self.df = pd.read_csv(self.csv_file).fillna("")
 
@@ -128,9 +122,6 @@ class TFIDFRAGChatbot:
         self.df["clean_text"] = self.df["combined_text"].apply(self.normalize_text)
         self.build_index()
 
-    # =============================
-    # BUILD TF-IDF
-    # =============================
     def build_index(self):
         self.word_vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2))
         self.word_matrix = self.word_vectorizer.fit_transform(self.df["clean_text"])
@@ -138,53 +129,36 @@ class TFIDFRAGChatbot:
         self.char_vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5))
         self.char_matrix = self.char_vectorizer.fit_transform(self.df["clean_text"])
 
-    # =============================
-    # INTENT DETECTION
-    # =============================
     def predict_intent(self, query):
         q = self.normalize_text(query)
 
         if "intake" in q:
             return "intake_info"
-
         if "admission process" in q or ("apply" in q and "fee" not in q):
             return "admission_apply"
-
         if ("campus" in q and "location" in q) or ("where" in q and "campus" in q):
             return "location_info"
-
         if "course" in q and "requirements" not in q:
             return "course_list"
-
         if "programme" in q or "diploma" in q or "degree" in q or "postgraduate" in q:
             return "programme_list"
-
         if "entry" in q or "requirements" in q:
             return "requirements_info"
-
         if "scholarship" in q or "loan" in q or "financial aid" in q or "ptptn" in q:
             return "scholarship_info"
-
         if "hostel" in q or "accommodation" in q or "room" in q:
             return "hostel_info"
-
         if "fee" in q or "payment" in q or "cost" in q or "price" in q or "tuition" in q:
             return "fees_detail"
-
         if "library" in q or "wifi" in q or "facility" in q or "lab" in q or "canteen" in q or "sports" in q:
             return "facilities_info"
-
         if "document" in q or "certificate" in q or "transcript" in q:
             return "document_info"
-
         if "deadline" in q or "closing date" in q or "last date" in q:
             return "deadline_info"
 
         return "None"
 
-    # =============================
-    # RULE-BASED ANSWERS
-    # =============================
     def rule_based_answer(self, query):
         q = self.normalize_text(query)
 
@@ -206,11 +180,17 @@ class TFIDFRAGChatbot:
         if "entry" in q or "requirements" in q:
             return "Entry requirements depend on the programme level and relevant academic qualifications such as SPM, UEC, STPM or equivalent."
 
+        if "facility" in q or "library" in q or "wifi" in q or "lab" in q or "canteen" in q or "sports" in q:
+            return "TARUMT provides facilities such as libraries, computer labs, WiFi access, canteen services and sports facilities."
+
+        if "hostel" in q or "accommodation" in q:
+            return "Hostel or accommodation availability may depend on campus. Students should check the official TARUMT website or contact the relevant campus for details."
+
+        if "fee" in q or "payment" in q or "cost" in q or "tuition" in q:
+            return "Fees depend on the programme and level of study. Please refer to the official TARUMT website for the latest fee details."
+
         return None
 
-    # =============================
-    # TF-IDF FALLBACK
-    # =============================
     def tfidf_fallback(self, user_query):
         query = self.normalize_text(user_query)
 
@@ -231,9 +211,6 @@ class TFIDFRAGChatbot:
         row = self.df.iloc[best_idx]
         return row["context"] + " " + row["answer"], float(best_score)
 
-    # =============================
-    # MAIN RESPONSE
-    # =============================
     def get_response(self, user_query):
         predicted_intent = self.predict_intent(user_query)
         rule = self.rule_based_answer(user_query)
@@ -252,336 +229,641 @@ class TFIDFRAGChatbot:
             "predicted_intent": predicted_intent
         }
 
-    # =============================
-    # EVALUATION
-    # =============================
-    def safe_divide(self, a, b):
-        return a / b if b != 0 else 0.0
 
-    def classification_metrics(self, y_true, y_pred):
-        labels = sorted(set(y_true) | set(y_pred))
-        rows = []
-
-        total_tp = 0
-        total_fp = 0
-        total_fn = 0
-
-        for label in labels:
-            tp = sum(1 for t, p in zip(y_true, y_pred) if t == label and p == label)
-            fp = sum(1 for t, p in zip(y_true, y_pred) if t != label and p == label)
-            fn = sum(1 for t, p in zip(y_true, y_pred) if t == label and p != label)
-
-            precision = self.safe_divide(tp, tp + fp)
-            recall = self.safe_divide(tp, tp + fn)
-            relevant = self.safe_divide(2 * precision * recall, precision + recall)
-
-            rows.append({
-                "intent": label,
-                "precision": round(precision, 4),
-                "recall": round(recall, 4),
-                "relevant_score": round(relevant, 4),
-                "support": sum(1 for t in y_true if t == label)
-            })
-
-            total_tp += tp
-            total_fp += fp
-            total_fn += fn
-
-        micro_precision = self.safe_divide(total_tp, total_tp + total_fp)
-        micro_recall = self.safe_divide(total_tp, total_tp + total_fn)
-        micro_relevant = self.safe_divide(
-            2 * micro_precision * micro_recall,
-            micro_precision + micro_recall
-        )
-
-        macro_precision = sum(r["precision"] for r in rows) / len(rows) if rows else 0.0
-        macro_recall = sum(r["recall"] for r in rows) / len(rows) if rows else 0.0
-        macro_relevant = sum(r["relevant_score"] for r in rows) / len(rows) if rows else 0.0
-
-        summary = {
-            "micro_precision": round(micro_precision, 4),
-            "micro_recall": round(micro_recall, 4),
-            "micro_relevant": round(micro_relevant, 4),
-            "macro_precision": round(macro_precision, 4),
-            "macro_recall": round(macro_recall, 4),
-            "macro_relevant": round(macro_relevant, 4)
-        }
-
-        return rows, summary
-
-    def evaluate_from_file(self, test_csv):
-        try:
-            test_df = pd.read_csv(test_csv).fillna("")
-        except Exception as e:
-            return False, f"Could not read evaluation file: {e}"
-
-        required_cols = ["question", "expected_intent", "expected_answer"]
-        missing = [c for c in required_cols if c not in test_df.columns]
-        if missing:
-            return False, f"Evaluation CSV missing columns: {', '.join(missing)}"
-
-        y_true = []
-        y_pred = []
-        detailed_rows = []
-
-        for _, row in test_df.iterrows():
-            question = str(row["question"]).strip()
-            expected_intent = str(row["expected_intent"]).strip()
-
-            result = self.get_response(question)
-            predicted_intent = str(result.get("predicted_intent", "None"))
-
-            y_true.append(expected_intent)
-            y_pred.append(predicted_intent)
-
-            detailed_rows.append({
-                "question": question,
-                "expected_intent": expected_intent,
-                "predicted_intent": predicted_intent,
-                "score": result.get("score", 0)
-            })
-
-        report_rows, summary = self.classification_metrics(y_true, y_pred)
-
-        report_df = pd.DataFrame(report_rows)
-        detailed_df = pd.DataFrame(detailed_rows)
-
-        report_df.to_csv("tfidf_chatbot_evaluation_intent_report.csv", index=False)
-        detailed_df.to_csv("tfidf_chatbot_evaluation_detailed_results.csv", index=False)
-
-        with open("tfidf_chatbot_evaluation_report.txt", "w", encoding="utf-8") as f:
-            f.write("TFIDF CHATBOT EVALUATION REPORT\n")
-            f.write("=" * 50 + "\n\n")
-            f.write("Intent Classification Metrics\n")
-            f.write(str(report_df.to_string(index=False)))
-            f.write("\n\n")
-            f.write(f"Micro Precision : {summary['micro_precision']}\n")
-            f.write(f"Micro Recall    : {summary['micro_recall']}\n")
-            f.write(f"Micro Relevant  : {summary['micro_relevant']}\n")
-            f.write(f"Macro Precision : {summary['macro_precision']}\n")
-            f.write(f"Macro Recall    : {summary['macro_recall']}\n")
-            f.write(f"Macro Relevant  : {summary['macro_relevant']}\n")
-
-        result_text = []
-        result_text.append("Intent Classification Summary\n")
-        result_text.append(report_df.to_string(index=False))
-        result_text.append("\n")
-        result_text.append(f"Micro Precision : {summary['micro_precision']}")
-        result_text.append(f"Micro Recall    : {summary['micro_recall']}")
-        result_text.append(f"Micro Relevant  : {summary['micro_relevant']}")
-        result_text.append(f"Macro Precision : {summary['macro_precision']}")
-        result_text.append(f"Macro Recall    : {summary['macro_recall']}")
-        result_text.append(f"Macro Relevant  : {summary['macro_relevant']}")
-
-        return True, "\n".join(result_text)
-
-    # =============================
-    # OPTIONAL EXTERNAL API EXAMPLE
-    # =============================
-    def get_joke_from_api(self):
-        """
-        Example of external API integration.
-        This uses a public joke API just to show platform/API extension.
-        """
-        try:
-            response = requests.get("https://official-joke-api.appspot.com/random_joke", timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                setup = data.get("setup", "")
-                punchline = data.get("punchline", "")
-                return f"{setup}\n{punchline}"
-            return "Could not get data from external API."
-        except Exception as e:
-            return f"API error: {e}"
-
-
-class ChatbotGUI:
+class TARUMTChatbotGUI:
     def __init__(self, root, chatbot):
         self.root = root
         self.chatbot = chatbot
 
-        self.root.title("TARUMT Chatbot GUI")
-        self.root.geometry("900x650")
-        self.root.configure(bg="#f4f6f8")
+        self.root.title("TARUMT FAQ Chatbot")
+        self.root.geometry("1280x800")
+        self.root.configure(bg="#eef3fb")
+        self.root.minsize(1080, 700)
 
+        self.primary = "#0d47a1"
+        self.primary2 = "#1565c0"
+        self.bg = "#eef3fb"
+        self.sidebar_bg = "#dfe8f7"
+        self.card_bg = "#ffffff"
+        self.chat_bg = "#f7f9fc"
+        self.user_bubble = "#dbeafe"
+        self.bot_bubble = "#eef2f7"
+        self.text_dark = "#1f2d3d"
+        self.text_muted = "#6b7280"
+        self.success = "#2e7d32"
+        self.danger = "#e05a63"
+        self.exit_bg = "#6b7280"
+        self.input_bg = "#dce3ec"
+
+        self.logo = None
+        self.bot_avatar = None
+        self.user_avatar = None
+
+        self.placeholder = "Type your question here..."
+        self.typing_bubble = None
+        self.typing_job = None
+        self.typing_step = 0
+
+        self.load_images()
         self.build_gui()
 
+    def load_images(self):
+        try:
+            logo_img = Image.open("tarumt_logo.jpg")
+            logo_img.thumbnail((420, 78))
+            self.logo = ImageTk.PhotoImage(logo_img)
+        except Exception:
+            self.logo = None
+
+        try:
+            bot_img = Image.open("bot.png").resize((38, 38))
+            self.bot_avatar = ImageTk.PhotoImage(bot_img)
+        except Exception:
+            self.bot_avatar = None
+
+        try:
+            user_img = Image.open("user.png").resize((38, 38))
+            self.user_avatar = ImageTk.PhotoImage(user_img)
+        except Exception:
+            self.user_avatar = None
+
     def build_gui(self):
-        title = tk.Label(
-            self.root,
-            text="TARUMT TF-IDF Chatbot",
-            font=("Arial", 20, "bold"),
-            bg="#f4f6f8",
-            fg="#1f3b73"
+        self.build_header()
+        self.build_main()
+        self.build_footer()
+
+        self.add_bot_message(
+            "Hello. Welcome to the TARUMT FAQ Chatbot.\n"
+            "Ask me about intake, programmes, courses, campus, admission, fees, hostel, and requirements."
         )
-        title.pack(pady=10)
 
-        subtitle = tk.Label(
-            self.root,
-            text="GUI + Intent Detection + TF-IDF Retrieval + API Integration",
-            font=("Arial", 11),
-            bg="#f4f6f8",
-            fg="#555555"
-        )
-        subtitle.pack()
+    def add_hover(self, button, normal_color, hover_color):
+        def on_enter(event):
+            button.config(bg=hover_color)
 
-        # Chat display
-        self.chat_area = scrolledtext.ScrolledText(
-            self.root,
-            wrap=tk.WORD,
-            width=100,
-            height=25,
-            font=("Arial", 11),
-            bg="white",
-            fg="black",
-            state="disabled"
-        )
-        self.chat_area.pack(padx=15, pady=15, fill=tk.BOTH, expand=True)
+        def on_leave(event):
+            button.config(bg=normal_color)
 
-        # Quick buttons
-        quick_frame = tk.Frame(self.root, bg="#f4f6f8")
-        quick_frame.pack(pady=5)
+        button.bind("<Enter>", on_enter)
+        button.bind("<Leave>", on_leave)
 
-        quick_questions = [
-            ("Intake", "What are the intake months?"),
-            ("Course", "What courses are offered?"),
-            ("Programme", "What programmes are offered?"),
-            ("Campus", "Where are the campuses located?"),
-            ("Apply", "How do I apply?"),
-            ("Requirements", "What are the entry requirements?")
-        ]
+    def build_header(self):
+        header = tk.Frame(self.root, bg=self.primary, height=112)
+        header.pack(fill="x")
+        header.pack_propagate(False)
 
-        for text, question in quick_questions:
-            btn = tk.Button(
-                quick_frame,
-                text=text,
-                width=14,
-                command=lambda q=question: self.quick_ask(q),
-                bg="#dbe9ff"
-            )
-            btn.pack(side=tk.LEFT, padx=4)
+        left = tk.Frame(header, bg=self.primary)
+        left.pack(side="left", padx=20, pady=16)
 
-        # Input frame
-        input_frame = tk.Frame(self.root, bg="#f4f6f8")
-        input_frame.pack(fill=tk.X, padx=15, pady=10)
+        if self.logo is not None:
+            tk.Label(left, image=self.logo, bg=self.primary).pack(side="left", padx=(0, 16))
 
-        self.user_input = tk.Entry(input_frame, font=("Arial", 12))
-        self.user_input.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
-        self.user_input.bind("<Return>", lambda event: self.send_message())
-
-        send_btn = tk.Button(
-            input_frame,
-            text="Send",
-            font=("Arial", 11, "bold"),
-            bg="#4caf50",
-            fg="white",
-            width=10,
-            command=self.send_message
-        )
-        send_btn.pack(side=tk.LEFT, padx=5)
-
-        clear_btn = tk.Button(
-            input_frame,
-            text="Clear",
-            font=("Arial", 11, "bold"),
-            bg="#f44336",
-            fg="white",
-            width=10,
-            command=self.clear_chat
-        )
-        clear_btn.pack(side=tk.LEFT, padx=5)
-
-        # Bottom buttons
-        bottom_frame = tk.Frame(self.root, bg="#f4f6f8")
-        bottom_frame.pack(pady=5)
-
-        eval_btn = tk.Button(
-            bottom_frame,
-            text="Run Evaluation",
-            width=18,
-            command=self.run_evaluation,
-            bg="#ffcc80"
-        )
-        eval_btn.pack(side=tk.LEFT, padx=5)
-
-        api_btn = tk.Button(
-            bottom_frame,
-            text="Test External API",
-            width=18,
-            command=self.call_external_api,
-            bg="#b2dfdb"
-        )
-        api_btn.pack(side=tk.LEFT, padx=5)
+            text_wrap = tk.Frame(left, bg=self.primary)
+            text_wrap.pack(side="left")
+            tk.Label(
+                text_wrap,
+                text="FAQ Chatbot",
+                font=("Arial", 24, "bold"),
+                bg=self.primary,
+                fg="white"
+            ).pack(anchor="w")
+            tk.Label(
+                text_wrap,
+                text="University Information Assistant",
+                font=("Arial", 12),
+                bg=self.primary,
+                fg="#dbeafe"
+            ).pack(anchor="w", pady=(4, 0))
+        else:
+            text_wrap = tk.Frame(left, bg=self.primary)
+            text_wrap.pack(side="left")
+            tk.Label(
+                text_wrap,
+                text="TARUMT FAQ Chatbot",
+                font=("Arial", 28, "bold"),
+                bg=self.primary,
+                fg="white"
+            ).pack(anchor="w")
+            tk.Label(
+                text_wrap,
+                text="University Information Assistant",
+                font=("Arial", 12),
+                bg=self.primary,
+                fg="#dbeafe"
+            ).pack(anchor="w", pady=(4, 0))
 
         website_btn = tk.Button(
-            bottom_frame,
+            header,
             text="Open TARUMT Website",
-            width=18,
-            command=self.open_website,
-            bg="#c5cae9"
+            font=("Arial", 11, "bold"),
+            bg="white",
+            fg=self.primary,
+            relief="flat",
+            bd=0,
+            padx=18,
+            pady=12,
+            cursor="hand2",
+            command=lambda: webbrowser.open("https://www.tarc.edu.my/")
         )
-        website_btn.pack(side=tk.LEFT, padx=5)
+        website_btn.pack(side="right", padx=26)
+        self.add_hover(website_btn, "white", "#dbeafe")
 
-        self.append_chat("Bot", "Hello. Welcome to the TARUMT Chatbot GUI.\nAsk me about intake, courses, programmes, campus, admission, or requirements.")
+    def build_main(self):
+        main = tk.Frame(self.root, bg=self.bg)
+        main.pack(fill="both", expand=True, padx=18, pady=18)
 
-    def append_chat(self, sender, message):
-        self.chat_area.config(state="normal")
-        self.chat_area.insert(tk.END, f"{sender}: {message}\n\n")
-        self.chat_area.config(state="disabled")
-        self.chat_area.see(tk.END)
+        self.build_sidebar(main)
+        self.build_chat_panel(main)
 
-    def send_message(self):
-        question = self.user_input.get().strip()
-        if not question:
-            messagebox.showwarning("Warning", "Please enter a question.")
+    def build_sidebar(self, parent):
+        sidebar = tk.Frame(parent, bg=self.sidebar_bg, width=320)
+        sidebar.pack(side="left", fill="y", padx=(0, 14))
+        sidebar.pack_propagate(False)
+
+        tk.Label(
+            sidebar,
+            text="Quick Questions",
+            font=("Arial", 19, "bold"),
+            bg=self.sidebar_bg,
+            fg=self.primary
+        ).pack(anchor="w", padx=18, pady=(22, 14))
+
+        button_wrap = tk.Frame(sidebar, bg=self.sidebar_bg)
+        button_wrap.pack(fill="x", padx=16)
+
+        quick_questions = [
+            "What are the intake months?",
+            "What courses are offered?",
+            "What programmes are offered?",
+            "Where are the campuses located?",
+            "How do I apply?",
+            "What are the entry requirements?",
+            "What facilities are available?",
+            "Is there hostel accommodation?"
+        ]
+
+        for q in quick_questions:
+            btn = tk.Button(
+                button_wrap,
+                text=q,
+                font=("Arial", 10),
+                bg="white",
+                fg="#334155",
+                wraplength=235,
+                justify="left",
+                anchor="w",
+                relief="flat",
+                bd=0,
+                padx=16,
+                pady=14,
+                cursor="hand2",
+                command=lambda question=q: self.ask_quick_question(question)
+            )
+            btn.pack(fill="x", pady=5)
+            self.add_hover(btn, "white", "#e0e7ff")
+
+        tk.Frame(sidebar, bg=self.sidebar_bg, height=10).pack(fill="x", expand=True)
+
+        info_card = tk.Frame(sidebar, bg="white", bd=0, relief="flat")
+        info_card.pack(fill="x", padx=16, pady=(8, 16))
+
+        tk.Label(
+            info_card,
+            text="Chat Info",
+            font=("Arial", 16, "bold"),
+            bg="white",
+            fg="#163b82"
+        ).pack(anchor="w", padx=18, pady=(16, 8))
+
+        self.info_intent = tk.Label(
+            info_card,
+            text="Predicted Intent: -",
+            font=("Arial", 11),
+            bg="white",
+            fg="#334155",
+            anchor="w",
+            justify="left"
+        )
+        self.info_intent.pack(fill="x", padx=18, pady=(4, 2))
+
+        self.info_score = tk.Label(
+            info_card,
+            text="Confidence Score: -",
+            font=("Arial", 11),
+            bg="white",
+            fg="#334155",
+            anchor="w",
+            justify="left"
+        )
+        self.info_score.pack(fill="x", padx=18, pady=(2, 14))
+
+        clear_btn = tk.Button(
+            info_card,
+            text="Clear Chat",
+            font=("Arial", 11, "bold"),
+            bg=self.danger,
+            fg="white",
+            relief="flat",
+            bd=0,
+            padx=12,
+            pady=12,
+            cursor="hand2",
+            command=self.clear_chat
+        )
+        clear_btn.pack(fill="x", padx=18, pady=(0, 16))
+        self.add_hover(clear_btn, self.danger, "#c9444e")
+
+    def build_chat_panel(self, parent):
+        panel = tk.Frame(parent, bg=self.card_bg)
+        panel.pack(side="left", fill="both", expand=True)
+
+        top_bar = tk.Frame(panel, bg=self.card_bg, height=58)
+        top_bar.pack(fill="x")
+        top_bar.pack_propagate(False)
+
+        tk.Label(
+            top_bar,
+            text="Conversation",
+            font=("Arial", 18, "bold"),
+            bg=self.card_bg,
+            fg=self.text_dark
+        ).pack(side="left", padx=22, pady=14)
+
+        self.status_label = tk.Label(
+            top_bar,
+            text="Ready",
+            font=("Arial", 11),
+            bg=self.card_bg,
+            fg=self.success
+        )
+        self.status_label.pack(side="right", padx=18)
+
+        divider = tk.Frame(panel, bg="#e5e7eb", height=1)
+        divider.pack(fill="x")
+
+        self.canvas = tk.Canvas(panel, bg=self.chat_bg, highlightthickness=0)
+        self.scrollbar = tk.Scrollbar(panel, orient="vertical", command=self.canvas.yview)
+        self.chat_container = tk.Frame(self.canvas, bg=self.chat_bg)
+
+        self.chat_container.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
+
+        self.canvas_window = self.canvas.create_window((0, 0), window=self.chat_container, anchor="nw")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.bind("<Configure>", self.resize_chat_width)
+
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="y")
+
+        self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
+
+    def build_footer(self):
+        footer = tk.Frame(self.root, bg=self.bg)
+        footer.pack(fill="x", padx=18, pady=(0, 18))
+
+        input_wrap = tk.Frame(footer, bg=self.input_bg, bd=0, relief="flat")
+        input_wrap.pack(side="left", fill="x", expand=True, padx=(0, 12))
+
+        tk.Label(
+            input_wrap,
+            text="⌕",
+            font=("Arial", 22),
+            bg=self.input_bg,
+            fg="#475569"
+        ).pack(side="left", padx=(14, 8))
+
+        self.user_input = tk.Entry(
+            input_wrap,
+            font=("Arial", 13),
+            relief="flat",
+            bd=0,
+            bg=self.input_bg,
+            fg="#6b7280",
+            insertbackground="#111827"
+        )
+        self.user_input.pack(side="left", fill="x", expand=True, ipady=16, padx=(0, 10))
+        self.user_input.insert(0, self.placeholder)
+
+        self.user_input.bind("<Return>", lambda event: self.send_message())
+        self.user_input.bind("<FocusIn>", self.on_entry_focus_in)
+        self.user_input.bind("<FocusOut>", self.on_entry_focus_out)
+
+        send_btn = tk.Button(
+            footer,
+            text="Send",
+            font=("Arial", 11, "bold"),
+            bg=self.primary2,
+            fg="white",
+            relief="flat",
+            bd=0,
+            padx=24,
+            pady=16,
+            cursor="hand2",
+            command=self.send_message
+        )
+        send_btn.pack(side="left", padx=(0, 10))
+        self.add_hover(send_btn, self.primary2, "#1e40af")
+
+        exit_btn = tk.Button(
+            footer,
+            text="Exit",
+            font=("Arial", 11, "bold"),
+            bg=self.exit_bg,
+            fg="white",
+            relief="flat",
+            bd=0,
+            padx=24,
+            pady=16,
+            cursor="hand2",
+            command=self.root.quit
+        )
+        exit_btn.pack(side="left")
+        self.add_hover(exit_btn, self.exit_bg, "#374151")
+
+    def on_entry_focus_in(self, event):
+        if self.user_input.get() == self.placeholder:
+            self.user_input.delete(0, tk.END)
+            self.user_input.config(fg="#111827")
+
+    def on_entry_focus_out(self, event):
+        if self.user_input.get().strip() == "":
+            self.user_input.delete(0, tk.END)
+            self.user_input.insert(0, self.placeholder)
+            self.user_input.config(fg="#6b7280")
+
+    def resize_chat_width(self, event):
+        self.canvas.itemconfig(self.canvas_window, width=event.width)
+
+    def on_mousewheel(self, event):
+        try:
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        except Exception:
+            pass
+
+    def rounded_rectangle_points(self, x1, y1, x2, y2, r=20):
+        return [
+            x1 + r, y1,
+            x2 - r, y1,
+            x2, y1,
+            x2, y1 + r,
+            x2, y2 - r,
+            x2, y2,
+            x2 - r, y2,
+            x1 + r, y2,
+            x1, y2,
+            x1, y2 - r,
+            x1, y1 + r,
+            x1, y1
+        ]
+
+    def create_text_avatar(self, parent, label_text, bg_color, fg_color, side):
+        avatar = tk.Canvas(parent, width=40, height=40, bg=self.chat_bg, highlightthickness=0, bd=0)
+        avatar.create_oval(2, 2, 38, 38, fill=bg_color, outline=bg_color)
+        avatar.create_text(20, 20, text=label_text, fill=fg_color, font=("Arial", 11, "bold"))
+        avatar.pack(side=side, padx=6)
+
+    def create_message_card(self, sender, message, meta=None, is_user=False):
+        outer = tk.Frame(self.chat_container, bg=self.chat_bg)
+        outer.pack(fill="x", padx=10, pady=8)
+
+        if is_user:
+            bubble_color = self.user_bubble
+            text_color = "#1e3a8a"
+            avatar_img = self.user_avatar
+            avatar_bg = "#3b82f6"
+            avatar_fg = "white"
+            row_side = "right"
+            avatar_text = "U"
+        else:
+            bubble_color = self.bot_bubble
+            text_color = "#065f46"
+            avatar_img = self.bot_avatar
+            avatar_bg = "#0f766e"
+            avatar_fg = "white"
+            row_side = "left"
+            avatar_text = "B"
+
+        row = tk.Frame(outer, bg=self.chat_bg)
+        row.pack(fill="x")
+
+        if not is_user:
+            if avatar_img is not None:
+                tk.Label(row, image=avatar_img, bg=self.chat_bg).pack(side="left", padx=6)
+            else:
+                self.create_text_avatar(row, avatar_text, avatar_bg, avatar_fg, "left")
+
+        bubble_canvas = tk.Canvas(row, bg=self.chat_bg, highlightthickness=0, bd=0)
+        bubble_frame = tk.Frame(bubble_canvas, bg=bubble_color, bd=0)
+        window_id = bubble_canvas.create_window(12, 10, window=bubble_frame, anchor="nw")
+
+        tk.Label(
+            bubble_frame,
+            text=sender,
+            font=("Arial", 11, "bold"),
+            bg=bubble_color,
+            fg=text_color
+        ).pack(anchor="w", padx=16, pady=(12, 4))
+
+        tk.Label(
+            bubble_frame,
+            text=message,
+            font=("Arial", 11),
+            bg=bubble_color,
+            fg="#111827",
+            wraplength=500,
+            justify="left"
+        ).pack(anchor="w", padx=16, pady=(0, 6))
+
+        if meta:
+            tk.Label(
+                bubble_frame,
+                text=meta,
+                font=("Arial", 9, "italic"),
+                bg=bubble_color,
+                fg="#6b7280",
+                wraplength=500,
+                justify="left"
+            ).pack(anchor="w", padx=16, pady=(0, 12))
+        else:
+            tk.Label(
+                bubble_frame,
+                text="",
+                bg=bubble_color
+            ).pack(anchor="w", padx=16, pady=(0, 10))
+
+        bubble_frame.update_idletasks()
+
+        width = bubble_frame.winfo_reqwidth() + 20
+        height = bubble_frame.winfo_reqheight() + 20
+
+        points = self.rounded_rectangle_points(2, 2, width, height, 20)
+
+        bubble_canvas.create_polygon(
+            points,
+            smooth=True,
+            fill=bubble_color,
+            outline=bubble_color
+        )
+
+        bubble_canvas.coords(window_id, 12, 10)
+        bubble_canvas.config(width=width + 4, height=height + 4)
+
+        if is_user:
+            bubble_canvas.pack(side="right", padx=5)
+            if avatar_img is not None:
+                tk.Label(row, image=avatar_img, bg=self.chat_bg).pack(side="right", padx=6)
+            else:
+                self.create_text_avatar(row, avatar_text, avatar_bg, avatar_fg, "right")
+        else:
+            bubble_canvas.pack(side="left", padx=5)
+
+        self.root.after(100, lambda: self.canvas.yview_moveto(1.0))
+
+    def show_typing_indicator(self):
+        self.hide_typing_indicator()
+
+        outer = tk.Frame(self.chat_container, bg=self.chat_bg)
+        outer.pack(fill="x", padx=10, pady=8)
+
+        row = tk.Frame(outer, bg=self.chat_bg)
+        row.pack(fill="x")
+
+        if self.bot_avatar is not None:
+            tk.Label(row, image=self.bot_avatar, bg=self.chat_bg).pack(side="left", padx=6)
+        else:
+            self.create_text_avatar(row, "B", "#0f766e", "white", "left")
+
+        bubble_color = self.bot_bubble
+        bubble_canvas = tk.Canvas(row, bg=self.chat_bg, highlightthickness=0, bd=0)
+        bubble_frame = tk.Frame(bubble_canvas, bg=bubble_color, bd=0)
+        window_id = bubble_canvas.create_window(12, 10, window=bubble_frame, anchor="nw")
+
+        tk.Label(
+            bubble_frame,
+            text="Bot",
+            font=("Arial", 11, "bold"),
+            bg=bubble_color,
+            fg="#065f46"
+        ).pack(anchor="w", padx=16, pady=(12, 4))
+
+        typing_label = tk.Label(
+            bubble_frame,
+            text="Typing.",
+            font=("Arial", 11, "italic"),
+            bg=bubble_color,
+            fg="#6b7280"
+        )
+        typing_label.pack(anchor="w", padx=16, pady=(0, 12))
+
+        bubble_frame.update_idletasks()
+
+        width = bubble_frame.winfo_reqwidth() + 20
+        height = bubble_frame.winfo_reqheight() + 20
+
+        points = self.rounded_rectangle_points(2, 2, width, height, 20)
+
+        bubble_canvas.create_polygon(
+            points,
+            smooth=True,
+            fill=bubble_color,
+            outline=bubble_color
+        )
+
+        bubble_canvas.coords(window_id, 12, 10)
+        bubble_canvas.config(width=width + 4, height=height + 4)
+        bubble_canvas.pack(side="left", padx=5)
+
+        self.typing_bubble = {
+            "outer": outer,
+            "label": typing_label
+        }
+
+        self.typing_step = 0
+        self.animate_typing()
+        self.root.after(100, lambda: self.canvas.yview_moveto(1.0))
+
+    def animate_typing(self):
+        if not self.typing_bubble:
             return
 
-        self.append_chat("You", question)
+        states = ["Typing.", "Typing..", "Typing..."]
+        self.typing_bubble["label"].config(text=states[self.typing_step % len(states)])
+        self.typing_step += 1
+        self.typing_job = self.root.after(400, self.animate_typing)
 
-        result = self.chatbot.get_response(question)
+    def hide_typing_indicator(self):
+        if self.typing_job:
+            self.root.after_cancel(self.typing_job)
+            self.typing_job = None
+
+        if self.typing_bubble:
+            self.typing_bubble["outer"].destroy()
+            self.typing_bubble = None
+
+    def add_user_message(self, message):
+        self.create_message_card("You", message, is_user=True)
+
+    def add_bot_message(self, message, intent=None, score=None):
+        meta = None
+        if intent is not None and score is not None:
+            meta = f"Predicted Intent: {intent} | Score: {score}"
+        self.create_message_card("Bot", message, meta=meta, is_user=False)
+
+    def add_system_message(self, message):
+        self.create_message_card("System", message, is_user=False)
+
+    def process_bot_response(self, user_text):
+        result = self.chatbot.get_response(user_text)
         answer = result["answer"]
         intent = result["predicted_intent"]
         score = round(result["score"], 4)
 
-        full_reply = f"{answer}\n\nPredicted Intent: {intent}\nScore: {score}"
-        self.append_chat("Bot", full_reply)
+        self.hide_typing_indicator()
+        self.add_bot_message(answer, intent, score)
+        self.info_intent.config(text=f"Predicted Intent: {intent}")
+        self.info_score.config(text=f"Confidence Score: {score}")
+        self.status_label.config(text="Answered")
 
         self.user_input.delete(0, tk.END)
+        self.user_input.insert(0, self.placeholder)
+        self.user_input.config(fg="#6b7280")
 
-    def quick_ask(self, question):
+    def send_message(self):
+        user_text = self.user_input.get().strip()
+
+        if user_text == self.placeholder:
+            user_text = ""
+
+        if not user_text:
+            messagebox.showwarning("Warning", "Please enter a question.")
+            return
+
+        self.add_user_message(user_text)
+        self.status_label.config(text="Bot is typing...")
+        self.show_typing_indicator()
+
+        self.root.after(900, lambda: self.process_bot_response(user_text))
+
+    def ask_quick_question(self, question):
         self.user_input.delete(0, tk.END)
         self.user_input.insert(0, question)
+        self.user_input.config(fg="#111827")
         self.send_message()
 
     def clear_chat(self):
-        self.chat_area.config(state="normal")
-        self.chat_area.delete(1.0, tk.END)
-        self.chat_area.config(state="disabled")
-        self.append_chat("Bot", "Chat cleared. Ask me a new question.")
+        self.hide_typing_indicator()
 
-    def run_evaluation(self):
-        file_path = filedialog.askopenfilename(
-            title="Select Evaluation CSV",
-            filetypes=[("CSV files", "*.csv")]
-        )
+        for widget in self.chat_container.winfo_children():
+            widget.destroy()
 
-        if not file_path:
-            return
+        self.info_intent.config(text="Predicted Intent: -")
+        self.info_score.config(text="Confidence Score: -")
+        self.status_label.config(text="Ready")
 
-        success, result_text = self.chatbot.evaluate_from_file(file_path)
+        self.add_system_message("Chat has been cleared.")
 
-        if success:
-            messagebox.showinfo("Evaluation Completed", "Evaluation files have been saved successfully.")
-            self.append_chat("System", result_text)
-        else:
-            messagebox.showerror("Evaluation Error", result_text)
-
-    def call_external_api(self):
-        api_result = self.chatbot.get_joke_from_api()
-        self.append_chat("External API", api_result)
-
-    def open_website(self):
-        webbrowser.open("https://www.tarc.edu.my/")
 
 def main():
     try:
@@ -589,11 +871,11 @@ def main():
     except Exception as e:
         root = tk.Tk()
         root.withdraw()
-        messagebox.showerror("Startup Error", f"Failed to load chatbot data:\n{e}")
+        messagebox.showerror("Error", f"Failed to load dataset:\n{e}")
         return
 
     root = tk.Tk()
-    app = ChatbotGUI(root, chatbot)
+    app = TARUMTChatbotGUI(root, chatbot)
     root.mainloop()
 
 

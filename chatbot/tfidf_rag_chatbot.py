@@ -6,6 +6,7 @@ from tkinter.scrolledtext import ScrolledText
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import precision_recall_fscore_support
+from sklearn.linear_model import LogisticRegression
 import webbrowser
 from PIL import Image, ImageTk
 
@@ -20,8 +21,13 @@ class TFIDFRAGChatbot:
         self.word_matrix = None
         self.char_matrix = None
 
+        self.intent_vectorizer = None
+        self.intent_model = None
+        self.intent_enabled = False
+
         self.synonym_map = {
             "program": "programme",
+            "programme": "programme",
             "programs": "programme",
             "programmes": "programme",
             "courses": "course",
@@ -54,7 +60,26 @@ class TFIDFRAGChatbot:
             "eligible": "eligibility",
             "enter": "entry",
             "joining": "join",
-            "joined": "join"
+            "joined": "join",
+            "where": "location",
+            "place": "location",
+            "address": "location",
+            "study": "course",
+            "learn": "course",
+            "subjects": "course",
+            "subject": "course",
+            "degree": "programme",
+            "diploma": "programme",
+            "hostels": "hostel",
+            "accommodations": "accommodation",
+            "qualify": "eligibility",
+            "qualifies": "eligibility",
+            "loan": "scholarship",
+            "loans": "scholarship",
+            "phone": "contact",
+            "email": "contact",
+            "number": "contact",
+            "map": "location"
         }
 
         self.load_data()
@@ -115,132 +140,241 @@ class TFIDFRAGChatbot:
     def load_data(self):
         self.df = pd.read_csv(self.csv_file).fillna("")
 
+        for col in ["question", "context", "answer"]:
+            if col not in self.df.columns:
+                self.df[col] = ""
+
+        if "intent" not in self.df.columns:
+            self.df["intent"] = ""
+
+        self.df["question"] = self.df["question"].astype(str)
+        self.df["context"] = self.df["context"].astype(str)
+        self.df["answer"] = self.df["answer"].astype(str)
+        self.df["intent"] = self.df["intent"].astype(str)
+
         self.df["combined_text"] = (
-            self.df["question"].astype(str) + " " +
-            self.df["context"].astype(str) + " " +
-            self.df["answer"].astype(str)
+            self.df["question"] + " " +
+            self.df["context"] + " " +
+            self.df["answer"]
         )
 
         self.df["clean_text"] = self.df["combined_text"].apply(self.normalize_text)
+        self.df["clean_question"] = self.df["question"].apply(self.normalize_text)
+
         self.build_index()
+        self.build_intent_model()
 
     def build_index(self):
-        self.word_vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2))
+        self.word_vectorizer = TfidfVectorizer(
+            stop_words="english",
+            ngram_range=(1, 3),
+            max_df=0.9,
+            min_df=1
+        )
         self.word_matrix = self.word_vectorizer.fit_transform(self.df["clean_text"])
 
-        self.char_vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5))
+        self.char_vectorizer = TfidfVectorizer(
+            analyzer="char_wb",
+            ngram_range=(3, 5)
+        )
         self.char_matrix = self.char_vectorizer.fit_transform(self.df["clean_text"])
+
+    def build_intent_model(self):
+        valid_df = self.df[self.df["intent"].str.strip() != ""].copy()
+
+        if valid_df.empty:
+            self.intent_enabled = False
+            return
+
+        unique_intents = valid_df["intent"].nunique()
+        if unique_intents < 2:
+            self.intent_enabled = False
+            return
+
+        self.intent_vectorizer = TfidfVectorizer(
+            stop_words="english",
+            ngram_range=(1, 2),
+            max_df=0.95,
+            min_df=1
+        )
+
+        X = self.intent_vectorizer.fit_transform(valid_df["clean_question"])
+        y = valid_df["intent"]
+
+        self.intent_model = LogisticRegression(
+            max_iter=2000,
+            class_weight="balanced"
+        )
+        self.intent_model.fit(X, y)
+        self.intent_enabled = True
+
+    def predict_intent_rule_fallback(self, query):
+        q = self.normalize_text(query)
+
+        intent_keywords = {
+            "admission_apply": [
+                "apply", "application", "admission", "register", "registration",
+                "enroll", "enrol", "admission process", "join"
+            ],
+            "requirements_info": [
+                "requirement", "requirements", "entry", "qualification",
+                "qualifications", "eligible", "eligibility", "minimum",
+                "criteria", "what do i need", "am i eligible", "can i apply"
+            ],
+            "fees_detail": [
+                "fee", "payment", "cost", "price", "tuition", "how much"
+            ],
+            "scholarship_info": [
+                "scholarship", "ptptn", "financial aid", "bursary", "funding", "loan"
+            ],
+            "contact_info": [
+                "contact", "phone", "email", "number", "hotline", "call"
+            ],
+            "transport_info": [
+                "transport", "bus", "lrt", "mrt", "train", "public transport"
+            ],
+            "hostel_info": [
+                "hostel", "accommodation", "room", "stay", "residential"
+            ],
+            "facilities_info": [
+                "facility", "library", "wifi", "lab", "canteen", "sports", "gym"
+            ],
+            "intake_info": [
+                "intake", "semester", "admission month"
+            ],
+            "location_info": [
+                "location", "campus", "address", "branch", "map", "where"
+            ],
+            "programme_list": [
+                "programme", "program", "degree", "diploma", "postgraduate"
+            ],
+            "course_list": [
+                "course", "subject", "field of study"
+            ]
+        }
+
+        scores = {}
+        for intent, keywords in intent_keywords.items():
+            score = 0
+            for kw in keywords:
+                if kw in q:
+                    score += 2 if " " in kw else 1
+            scores[intent] = score
+
+        best_intent = max(scores, key=scores.get)
+        best_score = scores[best_intent]
+
+        if best_score == 0:
+            return "general_info", 0.0
+
+        confidence = min(1.0, best_score / 4.0)
+        return best_intent, confidence
 
     def predict_intent(self, query):
         q = self.normalize_text(query)
 
-        if "intake" in q:
-            return "intake_info"
-        if "admission process" in q or ("apply" in q and "fee" not in q):
-            return "admission_apply"
-        if ("campus" in q and "location" in q) or ("where" in q and "campus" in q):
-            return "location_info"
-        if "course" in q and "requirements" not in q:
-            return "course_list"
-        if "programme" in q or "diploma" in q or "degree" in q or "postgraduate" in q:
-            return "programme_list"
-        if "entry" in q or "requirements" in q:
-            return "requirements_info"
-        if "scholarship" in q or "loan" in q or "financial aid" in q or "ptptn" in q:
-            return "scholarship_info"
-        if "hostel" in q or "accommodation" in q or "room" in q:
-            return "hostel_info"
-        if "fee" in q or "payment" in q or "cost" in q or "price" in q or "tuition" in q:
-            return "fees_detail"
-        if "library" in q or "wifi" in q or "facility" in q or "lab" in q or "canteen" in q or "sports" in q:
-            return "facilities_info"
-        if "document" in q or "certificate" in q or "transcript" in q:
-            return "document_info"
-        if "deadline" in q or "closing date" in q or "last date" in q:
-            return "deadline_info"
-        if "contact" in q or "phone" in q or "email" in q or "number" in q:
-            return "contact_info"
-        if "transport" in q or "bus" in q or "lrt" in q or "train" in q:
-            return "transport_info"
+        if self.intent_enabled:
+            X_query = self.intent_vectorizer.transform([q])
+            pred = self.intent_model.predict(X_query)[0]
+            probs = self.intent_model.predict_proba(X_query)[0]
+            confidence = float(max(probs))
+            return pred, confidence
 
-        return "None"
+        return self.predict_intent_rule_fallback(query)
 
-    def rule_based_answer(self, query):
-        q = self.normalize_text(query)
+    def rule_based_answer_by_intent(self, predicted_intent):
+        answers = {
+            "intake_info": "TARUMT intakes are January, May/June, September and November.",
+            "admission_apply": "You can apply through the TARUMT admission portal via the official website by selecting your programme and submitting the required documents.",
+            "location_info": "TARUMT has 6 campuses located in Kuala Lumpur, Penang, Perak, Johor, Pahang and Sabah.",
+            "course_list": "TARUMT offers courses in Engineering, Information Technology, Business and Accounting.",
+            "programme_list": "TARUMT offers Diploma, Degree and Postgraduate programmes.",
+            "requirements_info": "Entry requirements depend on the programme and qualification type such as SPM, STPM, UEC, diploma or equivalent. Students should check the official TARUMT admission requirements for the selected programme.",
+            "facilities_info": "TARUMT provides facilities such as libraries, computer labs, WiFi access, canteen services and sports facilities.",
+            "hostel_info": "Hostel or accommodation availability may depend on campus. Students should check the official TARUMT website or contact the relevant campus for details.",
+            "fees_detail": "Fees depend on the programme and level of study. Please refer to the official TARUMT website for the latest fee details.",
+            "scholarship_info": "Students may check available scholarships, financial aid, or PTPTN options through TARUMT's official website or the student support office.",
+            "contact_info": "You can contact TARUMT through the official website for campus phone numbers, email addresses, and enquiry channels.",
+            "transport_info": "Students can check available public transport options and campus accessibility details through the official TARUMT website or campus office.",
+            "general_info": "TARUMT is a private university in Malaysia offering diploma, degree and postgraduate programmes across multiple campuses."
+        }
+        return answers.get(predicted_intent)
 
-        if "intake" in q:
-            return "TARUMT intakes are January, May/June, September and November."
+    def tfidf_search_subset(self, query, subset_df):
+        temp_word_vectorizer = TfidfVectorizer(
+            stop_words="english",
+            ngram_range=(1, 3),
+            max_df=0.9,
+            min_df=1
+        )
+        temp_word_matrix = temp_word_vectorizer.fit_transform(subset_df["clean_text"])
 
-        if "admission process" in q or ("apply" in q and "fee" not in q):
-            return "You can apply through the TARUMT admission portal via the official website by selecting your programme and submitting the required documents."
+        temp_char_vectorizer = TfidfVectorizer(
+            analyzer="char_wb",
+            ngram_range=(3, 5)
+        )
+        temp_char_matrix = temp_char_vectorizer.fit_transform(subset_df["clean_text"])
 
-        if ("campus" in q and "location" in q) or ("where" in q and "campus" in q):
-            return "TARUMT has 6 campuses located in Kuala Lumpur, Penang, Perak, Johor, Pahang and Sabah."
+        word_vec = temp_word_vectorizer.transform([query])
+        char_vec = temp_char_vectorizer.transform([query])
 
-        if "course" in q and "requirements" not in q:
-            return "TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+        scores = (
+            0.75 * cosine_similarity(word_vec, temp_word_matrix).flatten() +
+            0.25 * cosine_similarity(char_vec, temp_char_matrix).flatten()
+        )
 
-        if "programme" in q or "diploma" in q or "degree" in q or "postgraduate" in q:
-            return "TARUMT offers Diploma, Degree and Postgraduate programmes."
+        best_idx = scores.argmax()
+        best_score = float(scores[best_idx])
+        row = subset_df.iloc[best_idx]
 
-        if "entry" in q or "requirements" in q:
-            return "Entry requirements depend on the programme level and relevant academic qualifications such as SPM, UEC, STPM or equivalent."
+        return row, best_score
 
-        if "facility" in q or "library" in q or "wifi" in q or "lab" in q or "canteen" in q or "sports" in q:
-            return "TARUMT provides facilities such as libraries, computer labs, WiFi access, canteen services and sports facilities."
-
-        if "hostel" in q or "accommodation" in q:
-            return "Hostel or accommodation availability may depend on campus. Students should check the official TARUMT website or contact the relevant campus for details."
-
-        if "fee" in q or "payment" in q or "cost" in q or "tuition" in q:
-            return "Fees depend on the programme and level of study. Please refer to the official TARUMT website for the latest fee details."
-
-        if "scholarship" in q or "loan" in q or "ptptn" in q or "financial aid" in q:
-            return "Students may check available scholarships, financial aid, or PTPTN options through TARUMT's official website or the student support office."
-
-        if "contact" in q or "phone" in q or "email" in q or "number" in q:
-            return "You can contact TARUMT through the official website for campus phone numbers, email addresses, and enquiry channels."
-
-        if "transport" in q or "bus" in q or "lrt" in q or "train" in q:
-            return "Students can check available public transport options and campus accessibility details through the official TARUMT website or campus office."
-
-        return None
-
-    def tfidf_fallback(self, user_query):
+    def tfidf_fallback(self, user_query, predicted_intent=None):
         query = self.normalize_text(user_query)
+
+        if predicted_intent and "intent" in self.df.columns:
+            subset_df = self.df[
+                self.df["intent"].astype(str).str.strip().str.lower() == predicted_intent.lower()
+            ]
+
+            if not subset_df.empty:
+                row, best_score = self.tfidf_search_subset(query, subset_df)
+                if best_score >= 0.06:
+                    return (row["context"] + " " + row["answer"]).strip(), best_score
 
         word_vec = self.word_vectorizer.transform([query])
         char_vec = self.char_vectorizer.transform([query])
 
         scores = (
-            0.6 * cosine_similarity(word_vec, self.word_matrix).flatten() +
-            0.4 * cosine_similarity(char_vec, self.char_matrix).flatten()
+            0.75 * cosine_similarity(word_vec, self.word_matrix).flatten() +
+            0.25 * cosine_similarity(char_vec, self.char_matrix).flatten()
         )
 
         best_idx = scores.argmax()
-        best_score = scores[best_idx]
+        best_score = float(scores[best_idx])
 
-        if best_score < 0.15:
-            return "Sorry, I could not find a relevant answer.", float(best_score)
+        if best_score < 0.06:
+            return "Sorry, I could not find a relevant answer.", best_score
 
         row = self.df.iloc[best_idx]
-        return row["context"] + " " + row["answer"], float(best_score)
+        return (row["context"] + " " + row["answer"]).strip(), best_score
 
     def get_response(self, user_query):
-        predicted_intent = self.predict_intent(user_query)
-        rule = self.rule_based_answer(user_query)
+        predicted_intent, intent_confidence = self.predict_intent(user_query)
 
-        if rule:
-            return {
-                "answer": rule,
-                "score": 1.0,
-                "predicted_intent": predicted_intent
-            }
+        if intent_confidence >= 0.75:
+            rule = self.rule_based_answer_by_intent(predicted_intent)
+            if rule:
+                return {
+                    "answer": rule,
+                    "score": round(intent_confidence, 4),
+                    "predicted_intent": predicted_intent
+                }
 
-        answer, score = self.tfidf_fallback(user_query)
+        answer, score = self.tfidf_fallback(user_query, predicted_intent)
         return {
             "answer": answer,
-            "score": score,
+            "score": round(score, 4),
             "predicted_intent": predicted_intent
         }
 
@@ -352,14 +486,12 @@ class TFIDFRAGChatbot:
 
 class TARUMTChatbotGUI:
     def __init__(self, root, chatbot):
-        # Load icons
         try:
             bot_img = Image.open("picture/bot.png").resize((32, 32))
             user_img = Image.open("picture/user.png").resize((32, 32))
-
             self.bot_icon = ImageTk.PhotoImage(bot_img)
             self.user_icon = ImageTk.PhotoImage(user_img)
-        except:
+        except Exception:
             self.bot_icon = None
             self.user_icon = None
 
@@ -427,11 +559,7 @@ class TARUMTChatbotGUI:
             logo_img.thumbnail((420, 80))
             self.logo = ImageTk.PhotoImage(logo_img)
 
-            tk.Label(
-                left,
-                image=self.logo,
-                bg=self.primary
-            ).pack(side="left", padx=(0, 18))
+            tk.Label(left, image=self.logo, bg=self.primary).pack(side="left", padx=(0, 18))
         except Exception:
             pass
 
@@ -469,6 +597,7 @@ class TARUMTChatbotGUI:
         )
         website_btn.pack(side="right", padx=26)
         self.add_hover(website_btn, "white", "#dbeafe")
+
     def build_main(self):
         main = tk.Frame(self.root, bg=self.bg)
         main.pack(fill="both", expand=True, padx=18, pady=18)
@@ -481,7 +610,6 @@ class TARUMTChatbotGUI:
         sidebar.pack(side="left", fill="y", padx=(0, 14))
         sidebar.pack_propagate(False)
 
-        # Title
         tk.Label(
             sidebar,
             text="Quick Questions",
@@ -490,7 +618,6 @@ class TARUMTChatbotGUI:
             fg=self.primary
         ).pack(anchor="w", padx=18, pady=(20, 12))
 
-        # ===== Top scroll area container =====
         scroll_area = tk.Frame(sidebar, bg=self.sidebar_bg)
         scroll_area.pack(fill="both", expand=True, padx=10)
 
@@ -544,14 +671,12 @@ class TARUMTChatbotGUI:
             btn.pack(fill="x", pady=6)
             self.add_hover(btn, "white", "#e0e7ff")
 
-        # Mouse wheel only for sidebar canvas
         def _on_mousewheel(event):
             canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
         canvas.bind("<Enter>", lambda e: canvas.bind_all("<MouseWheel>", _on_mousewheel))
         canvas.bind("<Leave>", lambda e: canvas.unbind_all("<MouseWheel>"))
 
-        # ===== Bottom action area =====
         bottom_area = tk.Frame(sidebar, bg=self.sidebar_bg)
         bottom_area.pack(fill="x", padx=16, pady=(10, 12))
 
@@ -749,28 +874,17 @@ class TARUMTChatbotGUI:
             anchor = "w"
             padx = (20, 220)
 
-        bubble_canvas = tk.Canvas(
-            outer,
-            bg=self.chat_bg,
-            highlightthickness=0,
-            bd=0
-        )
-
+        bubble_canvas = tk.Canvas(outer, bg=self.chat_bg, highlightthickness=0, bd=0)
         bubble_frame = tk.Frame(bubble_canvas, bg=bubble_color, bd=0)
         window_id = bubble_canvas.create_window(12, 10, window=bubble_frame, anchor="nw")
 
         header_row = tk.Frame(bubble_frame, bg=bubble_color)
-        
         header_row.pack(anchor="w", padx=16, pady=(12, 4))
 
         icon = self.user_icon if is_user else self.bot_icon
 
         if icon is not None:
-            tk.Label(
-                header_row,
-                image=icon,
-                bg=bubble_color
-            ).pack(side="left", padx=(0, 6))
+            tk.Label(header_row, image=icon, bg=bubble_color).pack(side="left", padx=(0, 6))
 
         tk.Label(
             header_row,
@@ -801,11 +915,7 @@ class TARUMTChatbotGUI:
                 justify="left"
             ).pack(anchor="w", padx=16, pady=(0, 12))
         else:
-            tk.Label(
-                bubble_frame,
-                text="",
-                bg=bubble_color
-            ).pack(anchor="w", padx=16, pady=(0, 10))
+            tk.Label(bubble_frame, text="", bg=bubble_color).pack(anchor="w", padx=16, pady=(0, 10))
 
         bubble_frame.update_idletasks()
 
@@ -823,7 +933,6 @@ class TARUMTChatbotGUI:
 
         bubble_canvas.coords(window_id, 12, 10)
         bubble_canvas.config(width=width + 4, height=height + 4)
-
         bubble_canvas.pack(anchor=anchor, padx=padx)
 
         self.root.after(100, lambda: self.canvas.yview_moveto(1.0))
@@ -835,12 +944,7 @@ class TARUMTChatbotGUI:
         outer.pack(fill="x", padx=18, pady=8)
 
         bubble_color = self.bot_bubble
-        bubble_canvas = tk.Canvas(
-            outer,
-            bg=self.chat_bg,
-            highlightthickness=0,
-            bd=0
-        )
+        bubble_canvas = tk.Canvas(outer, bg=self.chat_bg, highlightthickness=0, bd=0)
 
         bubble_frame = tk.Frame(bubble_canvas, bg=bubble_color, bd=0)
         window_id = bubble_canvas.create_window(12, 10, window=bubble_frame, anchor="nw")
@@ -961,7 +1065,6 @@ class TARUMTChatbotGUI:
             widget.destroy()
 
         self.status_label.config(text="Ready")
-
         self.add_system_message("Chat has been cleared.")
 
     def run_evaluation_popup(self):
@@ -1028,7 +1131,6 @@ def main():
     root = tk.Tk()
     app = TARUMTChatbotGUI(root, chatbot)
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()

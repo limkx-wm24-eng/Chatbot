@@ -7,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import webbrowser
 from PIL import Image, ImageTk
 
-
+# Class TF-IDF-based RAG Chatbot for TARUMT FAQ dataset
 class TFIDFRAGChatbot:
     def __init__(self, csv_file):
         self.csv_file = csv_file
@@ -229,7 +229,7 @@ class TFIDFRAGChatbot:
             "predicted_intent": predicted_intent
         }
 
-
+# User Interface for TARUMT FAQ Chatbot
 class TARUMTChatbotGUI:
     def __init__(self, root, chatbot):
         self.root = root
@@ -864,7 +864,7 @@ class TARUMTChatbotGUI:
 
         self.add_system_message("Chat has been cleared.")
 
-
+# Main run
 def main():
     try:
         chatbot = TFIDFRAGChatbot("tarumt_faq_dataset.csv")

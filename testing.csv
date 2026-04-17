@@ -1,0 +1,106 @@
+question,expected_intent,expected_answer
+How do I apply to study at TARUMT?,admission_apply,Students can apply online through the official TARUMT admission portal.
+Can I apply online for admission?,admission_apply,"Yes, students can apply online through the official TARUMT admission portal."
+What documents are required for application?,admission_apply,Applicants need to submit academic transcripts and required documents.
+How long does it take to process my application?,admission_apply,Application processing time depends on the completeness of submitted documents.
+How do I check my application status?,admission_apply,Applicants can check their application status through the official admission channel or portal.
+Can international students apply to TARUMT?,admission_apply,"Yes, international students can apply and must meet entry requirements."
+What English language requirements are needed?,admission_apply,English language requirements such as MUET may be required depending on the programme.
+Can I transfer from another university to TARUMT?,admission_apply,Transfer applications may be considered subject to TARUMT requirements and approval.
+Can I apply if I am waiting for my exam results?,admission_apply,"Applicants may apply while waiting for results, subject to TARUMT admission requirements."
+What happens after I receive an offer letter?,admission_apply,"After receiving an offer letter, students should follow the registration and enrollment instructions given by TARUMT."
+Do I need MUET to apply?,admission_apply,English language requirements such as MUET may be required depending on the programme.
+Can I apply to TARUMT after SPM?,admission_apply,Students can apply after SPM depending on the entry requirements of the selected programme.
+How do I contact the admission office?,contact_info,Students can contact TARUMT through official email or phone channels.
+Is there an application fee?,fees_detail,Application or administrative fees may apply depending on the programme and admission requirements.
+When is the application deadline for new intake?,intake_info,"Application deadlines depend on the intake schedule, so students should check the latest intake announcement."
+How many intakes does TARUMT have each year?,intake_info,"TARUMT has multiple intakes each year including January, May or June, September and November."
+When is the next intake?,intake_info,"TARUMT has intakes in January, May or June, September and November."
+When is the next intake for diploma programmes?,intake_info,"TARUMT has intakes in January, May or June, September and November."
+What month is the new intake?,intake_info,"TARUMT has intakes in January, May or June, September and November."
+What are the intake months?,intake_info,"The usual intake months are January, May or June, September and November."
+Does TARUMT have January intake?,intake_info,"Yes, TARUMT has intake periods including January, May or June, September and November."
+Does TARUMT have September intake?,intake_info,"Yes, TARUMT has intake periods including January, May or June, September and November."
+Does TARUMT have November intake?,intake_info,"Yes, TARUMT has intake periods including January, May or June, September and November."
+Can I enroll in May or June?,intake_info,"Yes, TARUMT has intake periods including January, May or June, September and November."
+What are the intakes for new students?,intake_info,"TARUMT has multiple intakes each year including January, May or June, September and November."
+What programmes are offered at TARUMT?,programme_list,"TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+Does TARUMT offer foundation programmes?,programme_list,"Yes, TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+What diploma programmes are available?,programme_list,"TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+What degree programmes are available?,programme_list,"TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+Does TARUMT offer postgraduate programmes?,programme_list,"Yes, TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+Are there part-time programmes available?,programme_list,Selected programmes may be available depending on TARUMT offerings.
+Does TARUMT offer online learning courses?,programme_list,"Programme availability, including study modes, depends on TARUMT offerings."
+What programme levels are available?,programme_list,"TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+Does TARUMT offer diploma programmes?,programme_list,"Yes, TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+Does TARUMT offer degree programmes?,programme_list,"Yes, TARUMT offers Foundation, Diploma, Degree and Postgraduate programmes."
+What courses are available at TARUMT?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+What are the most popular courses at TARUMT?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+How do I know which programme is suitable for me?,course_list,"Students can explore fields such as Engineering, Information Technology, Business and Accounting to find a suitable course."
+What can I study at TARUMT?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+Which courses can I take at TARUMT?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+Does TARUMT offer Engineering courses?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+Does TARUMT offer IT courses?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+Does TARUMT offer Business courses?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+Does TARUMT offer Accounting courses?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+What fields of study are available?,course_list,"TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
+What are the tuition fees for diploma programmes?,fees_detail,Tuition fees vary depending on the programme and level of study.
+What are the tuition fees for degree programmes?,fees_detail,Tuition fees vary depending on the programme and level of study.
+Can I pay tuition fees in installments?,fees_detail,Fee payment options depend on TARUMT policies and the student's payment arrangements.
+Are there discounts for early payment?,fees_detail,Fee discounts or payment arrangements depend on TARUMT policies.
+What happens if I fail to pay fees on time?,fees_detail,Late fee payment may affect registration or student status according to TARUMT policies.
+Are international student fees different?,fees_detail,Fees may differ depending on programme type and student category.
+How much are the tuition fees?,fees_detail,Tuition fees vary depending on the programme and level of study.
+How much is the programme fee?,fees_detail,Tuition fees vary depending on the programme and level of study.
+Is there any payment plan?,fees_detail,Fee payment options depend on TARUMT policies and the student's payment arrangements.
+What are the study costs?,fees_detail,Tuition fees vary depending on the programme and level of study.
+Are there scholarships available at TARUMT?,scholarship_info,"Yes, TARUMT offers scholarships and financial aid options."
+How can I apply for scholarships?,scholarship_info,Students can apply for scholarships or financial aid according to TARUMT application procedures.
+Are PTPTN loans available?,scholarship_info,PTPTN loans or other financial aid options may be available subject to eligibility.
+What financial aid options are available?,scholarship_info,"TARUMT offers scholarships, financial aid, and loan-related support subject to eligibility."
+Can I apply for scholarship after enrollment?,scholarship_info,Scholarship or financial aid applications depend on TARUMT eligibility rules and application periods.
+Does TARUMT provide financial aid?,scholarship_info,"Yes, TARUMT offers scholarships and financial aid options."
+Are bursaries available?,scholarship_info,Financial aid options such as scholarships or bursaries may be available subject to eligibility.
+Can I get a loan to study?,scholarship_info,PTPTN loans or other financial aid options may be available subject to eligibility.
+Is there a tuition fee waiver?,scholarship_info,Scholarships or financial aid may include support subject to TARUMT policies and eligibility.
+How do I apply for financial aid?,scholarship_info,Students can apply for scholarships or financial aid according to TARUMT application procedures.
+Where is the main campus located?,location_info,TARUMT main campus is located in Kuala Lumpur (Setapak).
+Where is TARUMT located?,location_info,"TARUMT main campus is located in Kuala Lumpur (Setapak), with other campuses in Penang, Perak, Johor, Pahang and Sabah."
+Does TARUMT have multiple campuses?,location_info,"Yes, TARUMT has campuses in Kuala Lumpur, Penang, Perak, Johor, Pahang and Sabah."
+How many campuses does TARUMT have?,location_info,"TARUMT has campuses in Kuala Lumpur, Penang, Perak, Johor, Pahang and Sabah."
+Where are TARUMT campuses located?,location_info,"TARUMT has campuses in Kuala Lumpur, Penang, Perak, Johor, Pahang and Sabah."
+Is TARUMT in Kuala Lumpur?,location_info,"Yes, TARUMT main campus is located in Kuala Lumpur (Setapak)."
+Does TARUMT have a Penang campus?,location_info,"Yes, TARUMT has campuses in Kuala Lumpur, Penang, Perak, Johor, Pahang and Sabah."
+Does TARUMT have a Sabah campus?,location_info,"Yes, TARUMT has campuses in Kuala Lumpur, Penang, Perak, Johor, Pahang and Sabah."
+Is the main campus in Setapak?,location_info,"Yes, TARUMT main campus is located in Kuala Lumpur (Setapak)."
+Which state is TARUMT in?,location_info,TARUMT main campus is located in Kuala Lumpur (Setapak).
+What facilities are available on campus?,facilities_info,"TARUMT provides facilities such as libraries, computer labs, Wi-Fi, sports facilities, cafeterias and lecture halls."
+Does TARUMT have computer labs?,facilities_info,"Yes, TARUMT provides computer labs for students."
+Are there libraries available?,facilities_info,"Yes, TARUMT provides library facilities for students."
+What are the library operating hours?,facilities_info,Library services and operating hours are provided according to campus arrangements.
+Are there sports facilities available?,facilities_info,"Yes, TARUMT provides sports and recreational facilities for students."
+Does the campus have Wi-Fi?,facilities_info,"Yes, Wi-Fi is available on campus for students."
+Are there cafeterias on campus?,facilities_info,"Yes, TARUMT provides cafeteria and food facilities on campus."
+Is parking available for students?,facilities_info,Parking availability depends on campus arrangements and student access rules.
+Is there medical service on campus?,facilities_info,Student support facilities may vary by campus arrangement.
+What facilities are available for disabled students?,facilities_info,Facilities and support services are provided subject to campus arrangements and student support policies.
+Does TARUMT provide student accommodation?,hostel_info,"Yes, students can apply for hostel accommodation subject to availability."
+How do I apply for hostel accommodation?,hostel_info,Students can apply for hostel accommodation according to TARUMT accommodation procedures.
+What is the cost of hostel accommodation?,hostel_info,"Hostel fees depend on room type, campus and accommodation arrangements."
+Are there separate hostels for male and female students?,hostel_info,Hostel arrangements depend on TARUMT accommodation policies and availability.
+Can international students stay in hostels?,hostel_info,Accommodation may be available for international students subject to TARUMT policies and availability.
+What facilities are available in hostels?,hostel_info,Hostel facilities depend on accommodation arrangements and campus availability.
+Are meals provided in the hostel?,hostel_info,Meal arrangements depend on hostel policies and campus accommodation services.
+Can I stay off-campus?,hostel_info,Students may consider off-campus accommodation depending on their own arrangements.
+Are there nearby rental houses?,hostel_info,Nearby accommodation options depend on campus location and student arrangements.
+How far is the hostel from campus?,hostel_info,Hostel distance depends on the assigned accommodation and campus location.
+How do I contact TARUMT?,contact_info,Students can contact TARUMT through official email or phone channels.
+What is the hotline number?,contact_info,Students can contact TARUMT through official email or phone channels.
+What is the email address for inquiries?,contact_info,Students can contact TARUMT through official email or phone channels.
+How can I reach the office?,contact_info,Students can contact TARUMT through official email or phone channels.
+Can I call the university office?,contact_info,Students can contact TARUMT through official email or phone channels.
+Can I use public transport to reach TARUMT?,transport_info,TARUMT campuses are accessible by public transport such as LRT and buses.
+Is there public transport to TARUMT?,transport_info,TARUMT campuses are accessible by public transport such as LRT and buses.
+How do students travel to TARUMT?,transport_info,TARUMT campuses are accessible by public transport such as LRT and buses.
+Can I go to TARUMT by bus?,transport_info,TARUMT campuses are accessible by public transport such as LRT and buses.
+Can I go to TARUMT by LRT?,transport_info,TARUMT campuses are accessible by public transport such as LRT and buses.

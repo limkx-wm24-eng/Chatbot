@@ -83,44 +83,49 @@ class TemplateRAGChatbot:
         }
 
         self.intent_patterns = {
-            "programme": [
-                r"\bprogramme\b", r"\bprogram\b", r"\bprogrammes\b", r"\bprograms\b"
+            "programme_list": [
+                r"\bprogramme\b", r"\bprogram\b", r"\bprogrammes\b", r"\bprograms\b",
+                r"\bdiploma\b", r"\bdegree\b", r"\bpostgraduate\b", r"\bfoundation\b"
             ],
-            "course": [
-                r"\bcourse\b", r"\bcourses\b", r"\bfield of study\b", r"\bsubjects\b"
+            "course_list": [
+                r"\bcourse\b", r"\bcourses\b", r"\bfield of study\b", r"\bsubjects\b",
+                r"\bengineering\b", r"\binformation technology\b", r"\bbusiness\b", r"\baccounting\b"
             ],
-            "campus": [
+            "location_info": [
                 r"\bcampus\b", r"\bcampuses\b", r"\bbranch\b", r"\bbranches\b",
-                r"\blocation\b", r"\blocations\b", r"\bwhere.*located\b"
+                r"\blocation\b", r"\blocations\b", r"\bwhere.*located\b",
+                r"\bkuala lumpur\b", r"\bpenang\b", r"\bperak\b", r"\bjohor\b", r"\bpahang\b", r"\bsabah\b"
             ],
-            "intake": [
+            "intake_info": [
                 r"\bintake\b", r"\bintakes\b", r"\bwhen.*admission\b",
-                r"\bwhen.*register\b", r"\bwhen.*apply\b"
+                r"\bwhen.*register\b", r"\bwhen.*apply\b",
+                r"\bjanuary\b", r"\bmay\b", r"\bjune\b", r"\bseptember\b", r"\bnovember\b"
             ],
-            "admission": [
+            "admission_apply": [
                 r"\badmission\b", r"\bapply\b", r"\bapplication\b",
-                r"\bhow to apply\b", r"\bapplication process\b", r"\bhow can i apply\b"
+                r"\bhow to apply\b", r"\bapplication process\b", r"\bhow can i apply\b",
+                r"\bdocuments required\b", r"\brequired documents\b", r"\bregister\b"
             ],
-            "requirements": [
+            "requirements_info": [
                 r"\brequirement\b", r"\brequirements\b",
                 r"\bentry requirement\b", r"\bentry requirements\b",
                 r"\beligibility\b", r"\bqualification\b", r"\bqualifications\b",
                 r"\bwhat.*need.*to enter\b", r"\bwhat.*need.*to apply\b"
             ],
-            "document": [
+            "document_info": [
                 r"\bdocument\b", r"\bdocuments\b", r"\brequired document\b",
                 r"\bwhat.*need.*submit\b", r"\bcertificate\b", r"\btranscript\b"
             ],
-            "fee": [
-                r"\bfee\b", r"\bfees\b", r"\bpayment\b", r"\btuition\b"
+            "fees_detail": [
+                r"\bfee\b", r"\bfees\b", r"\bpayment\b", r"\btuition\b", r"\bcost\b", r"\bprice\b"
             ],
-            "scholarship": [
-                r"\bscholarship\b", r"\bscholarships\b", r"\bfinancial aid\b", r"\bptptn\b"
+            "scholarship_info": [
+                r"\bscholarship\b", r"\bscholarships\b", r"\bfinancial aid\b", r"\bptptn\b", r"\bloan\b"
             ],
-            "accommodation": [
-                r"\bhostel\b", r"\baccommodation\b", r"\bstay\b", r"\bdorm\b"
+            "hostel_info": [
+                r"\bhostel\b", r"\baccommodation\b", r"\bstay\b", r"\bdorm\b", r"\broom\b"
             ],
-            "facilities": [
+            "facilities_info": [
                 r"\bfacility\b", r"\bfacilities\b", r"\bamenities\b",
                 r"\bwhat.*provided\b", r"\bwhat.*available\b",
                 r"\blibrary\b", r"\blab\b", r"\blabs\b",
@@ -128,7 +133,7 @@ class TemplateRAGChatbot:
                 r"\bsports\b", r"\bwifi\b", r"\bclassroom\b",
                 r"\bhall\b", r"\bcomputer\b"
             ],
-            "deadline": [
+            "deadline_info": [
                 r"\bdeadline\b", r"\bclosing date\b", r"\bclose date\b",
                 r"\blast date\b", r"\bwhen.*deadline\b", r"\bwhen.*closing\b"
             ]
@@ -179,6 +184,27 @@ class TemplateRAGChatbot:
                     intents.add(intent)
                     break
         return intents
+
+    def predict_intent_label(self, clean_query):
+        intents = self.detect_intents(clean_query)
+        priority = [
+            "intake_info",
+            "hostel_info",
+            "scholarship_info",
+            "fees_detail",
+            "location_info",
+            "programme_list",
+            "course_list",
+            "admission_apply",
+            "requirements_info",
+            "document_info",
+            "facilities_info",
+            "deadline_info"
+        ]
+        for label in priority:
+            if label in intents:
+                return label
+        return "None"
 
     def smart_query_expand(self, query):
         expanded = [query]
@@ -231,57 +257,49 @@ class TemplateRAGChatbot:
         return False
 
     def load_data(self):
-        try:
-            self.df = pd.read_csv(self.csv_file, encoding="utf-8")
-            self.df = self.df.drop_duplicates(subset=["question", "context", "answer"]).reset_index(drop=True)
+        self.df = pd.read_csv(self.csv_file, encoding="utf-8")
+        self.df = self.df.drop_duplicates(subset=["question", "context", "answer"]).reset_index(drop=True)
 
-            required_columns = ["question", "context", "answer"]
-            for col in required_columns:
-                if col not in self.df.columns:
-                    raise ValueError(f"Missing required column: {col}")
+        required_columns = ["question", "context", "answer"]
+        for col in required_columns:
+            if col not in self.df.columns:
+                raise ValueError(f"Missing required column: {col}")
 
-            self.df = self.df.fillna("")
-            self.df["question"] = self.df["question"].astype(str)
-            self.df["context"] = self.df["context"].astype(str)
-            self.df["answer"] = self.df["answer"].astype(str)
+        self.df = self.df.fillna("")
+        self.df["question"] = self.df["question"].astype(str)
+        self.df["context"] = self.df["context"].astype(str)
+        self.df["answer"] = self.df["answer"].astype(str)
 
-            self.df["clean_question"] = self.df["question"].apply(self.preprocess_text)
-            self.df["clean_context"] = self.df["context"].apply(self.preprocess_text)
-            self.df["clean_answer"] = self.df["answer"].apply(self.preprocess_text)
+        self.df["clean_question"] = self.df["question"].apply(self.preprocess_text)
+        self.df["clean_context"] = self.df["context"].apply(self.preprocess_text)
+        self.df["clean_answer"] = self.df["answer"].apply(self.preprocess_text)
 
-            self.df["combined_text"] = (
-                self.df["clean_question"] + " " +
-                self.df["clean_question"] + " " +
-                self.df["clean_context"] + " " +
-                self.df["clean_answer"]
-            )
+        self.df["combined_text"] = (
+            self.df["clean_question"] + " " +
+            self.df["clean_question"] + " " +
+            self.df["clean_context"] + " " +
+            self.df["clean_answer"]
+        )
 
-            self.word_vectorizer = TfidfVectorizer(
-                stop_words="english",
-                ngram_range=(1, 3),
-                sublinear_tf=True,
-                min_df=1
-            )
+        self.word_vectorizer = TfidfVectorizer(
+            stop_words="english",
+            ngram_range=(1, 3),
+            sublinear_tf=True,
+            min_df=1
+        )
 
-            self.char_vectorizer = TfidfVectorizer(
-                analyzer="char_wb",
-                ngram_range=(3, 5),
-                sublinear_tf=True,
-                min_df=1
-            )
+        self.char_vectorizer = TfidfVectorizer(
+            analyzer="char_wb",
+            ngram_range=(3, 5),
+            sublinear_tf=True,
+            min_df=1
+        )
 
-            self.word_matrix = self.word_vectorizer.fit_transform(self.df["combined_text"])
-            self.char_matrix = self.char_vectorizer.fit_transform(self.df["combined_text"])
+        self.word_matrix = self.word_vectorizer.fit_transform(self.df["combined_text"])
+        self.char_matrix = self.char_vectorizer.fit_transform(self.df["combined_text"])
 
-            print("Dataset loaded successfully.")
-            print(f"Total records: {len(self.df)}")
-
-        except FileNotFoundError:
-            print(f"Error: File '{self.csv_file}' not found.")
-            raise
-        except Exception as e:
-            print(f"Error loading dataset: {e}")
-            raise
+        print("Dataset loaded successfully.")
+        print(f"Total records: {len(self.df)}")
 
     def fallback_scope_message(self):
         return (
@@ -316,7 +334,7 @@ class TemplateRAGChatbot:
         query_intents = self.detect_intents(clean_query)
         filtered_indices = list(range(len(self.df)))
 
-        if "deadline" in query_intents:
+        if "deadline_info" in query_intents:
             deadline_words = [
                 "deadline", "closing", "date", "last", "intake",
                 "application", "admission", "january", "may", "june",
@@ -327,7 +345,7 @@ class TemplateRAGChatbot:
                 if any(word in self.df.iloc[i]["combined_text"] for word in deadline_words)
             ]
 
-        elif "requirements" in query_intents:
+        elif "requirements_info" in query_intents:
             requirement_words = [
                 "requirement", "requirements", "entry", "qualification",
                 "qualifications", "eligibility", "spm", "uec", "stpm"
@@ -337,7 +355,7 @@ class TemplateRAGChatbot:
                 if any(word in self.df.iloc[i]["combined_text"] for word in requirement_words)
             ]
 
-        elif "facilities" in query_intents:
+        elif "facilities_info" in query_intents:
             facility_words = [
                 "facility", "facilities", "library", "lab", "labs", "canteen",
                 "cafeteria", "sports", "wifi", "classroom", "hall", "computer"
@@ -347,28 +365,28 @@ class TemplateRAGChatbot:
                 if any(word in self.df.iloc[i]["combined_text"] for word in facility_words)
             ]
 
-        elif "accommodation" in query_intents:
+        elif "hostel_info" in query_intents:
             accommodation_words = ["accommodation", "hostel", "room", "stay", "dorm"]
             filtered_indices = [
                 i for i in range(len(self.df))
                 if any(word in self.df.iloc[i]["combined_text"] for word in accommodation_words)
             ]
 
-        elif "admission" in query_intents:
+        elif "admission_apply" in query_intents:
             admission_words = ["apply", "application", "admission", "portal", "register", "process"]
             filtered_indices = [
                 i for i in range(len(self.df))
                 if any(word in self.df.iloc[i]["combined_text"] for word in admission_words)
             ]
 
-        elif "document" in query_intents:
+        elif "document_info" in query_intents:
             document_words = ["document", "documents", "certificate", "transcript", "submit"]
             filtered_indices = [
                 i for i in range(len(self.df))
                 if any(word in self.df.iloc[i]["combined_text"] for word in document_words)
             ]
 
-        elif "campus" in query_intents:
+        elif "location_info" in query_intents:
             campus_words = [
                 "campus", "campuses", "location", "branch", "kuala lumpur",
                 "penang", "perak", "johor", "pahang", "sabah"
@@ -378,7 +396,7 @@ class TemplateRAGChatbot:
                 if any(word in self.df.iloc[i]["combined_text"] for word in campus_words)
             ]
 
-        elif "programme" in query_intents or "course" in query_intents:
+        elif "programme_list" in query_intents or "course_list" in query_intents:
             programme_words = [
                 "programme", "programmes", "program", "course", "courses",
                 "diploma", "degree", "postgraduate", "faculty"
@@ -388,7 +406,7 @@ class TemplateRAGChatbot:
                 if any(word in self.df.iloc[i]["combined_text"] for word in programme_words)
             ]
 
-        elif "intake" in query_intents:
+        elif "intake_info" in query_intents:
             intake_words = ["intake", "january", "may", "june", "september", "november"]
             filtered_indices = [
                 i for i in range(len(self.df))
@@ -445,6 +463,7 @@ class TemplateRAGChatbot:
 
     def get_response(self, user_query):
         clean_query = self.preprocess_text(user_query)
+        predicted_intent = self.predict_intent_label(clean_query)
 
         if not clean_query:
             return {
@@ -452,6 +471,7 @@ class TemplateRAGChatbot:
                 "retrieved_context": None,
                 "answer": "Please enter a valid TAR UMT-related question.",
                 "score": 0.0,
+                "predicted_intent": "None",
                 "top_matches": []
             }
 
@@ -461,6 +481,7 @@ class TemplateRAGChatbot:
                 "retrieved_context": None,
                 "answer": self.fallback_scope_message(),
                 "score": 0.0,
+                "predicted_intent": "None",
                 "top_matches": []
             }
 
@@ -473,6 +494,7 @@ class TemplateRAGChatbot:
                 "retrieved_context": None,
                 "answer": self.fallback_no_match_message(),
                 "score": float(best_score if best_index is not None else 0.0),
+                "predicted_intent": predicted_intent,
                 "top_matches": []
             }
 
@@ -511,6 +533,7 @@ class TemplateRAGChatbot:
             "answer": best_row["answer"].strip(),
             "score": float(best_score),
             "confidence": confidence,
+            "predicted_intent": predicted_intent,
             "top_matches": top_matches
         }
 
@@ -518,6 +541,7 @@ class TemplateRAGChatbot:
         print("\n" + "=" * 80)
         print("Chatbot Type       : Enhanced Template-Based RAG")
         print(f"Similarity Score   : {result['score']:.4f}")
+        print(f"Predicted Intent   : {result.get('predicted_intent', 'None')}")
 
         if "confidence" in result:
             print(f"Confidence Level   : {result['confidence']}")
@@ -544,8 +568,128 @@ class TemplateRAGChatbot:
 
         print("=" * 80 + "\n")
 
+    def safe_divide(self, a, b):
+        return a / b if b != 0 else 0.0
+
+    def classification_metrics(self, y_true, y_pred):
+        labels = sorted(set(y_true) | set(y_pred))
+        rows = []
+
+        total_tp = 0
+        total_fp = 0
+        total_fn = 0
+
+        for label in labels:
+            tp = sum(1 for t, p in zip(y_true, y_pred) if t == label and p == label)
+            fp = sum(1 for t, p in zip(y_true, y_pred) if t != label and p == label)
+            fn = sum(1 for t, p in zip(y_true, y_pred) if t == label and p != label)
+
+            precision = self.safe_divide(tp, tp + fp)
+            recall = self.safe_divide(tp, tp + fn)
+            f1 = self.safe_divide(2 * precision * recall, precision + recall)
+
+            rows.append({
+                "intent": label,
+                "precision": round(precision, 4),
+                "recall": round(recall, 4),
+                "relevant_score": round(f1, 4),
+                "support": sum(1 for t in y_true if t == label)
+            })
+
+            total_tp += tp
+            total_fp += fp
+            total_fn += fn
+
+        micro_precision = self.safe_divide(total_tp, total_tp + total_fp)
+        micro_recall = self.safe_divide(total_tp, total_tp + total_fn)
+        micro_f1 = self.safe_divide(2 * micro_precision * micro_recall, micro_precision + micro_recall)
+
+        macro_precision = sum(r["precision"] for r in rows) / len(rows) if rows else 0.0
+        macro_recall = sum(r["recall"] for r in rows) / len(rows) if rows else 0.0
+        macro_f1 = sum(r["relevant_score"] for r in rows) / len(rows) if rows else 0.0
+
+        summary = {
+            "micro_precision": round(micro_precision, 4),
+            "micro_recall": round(micro_recall, 4),
+            "micro_relevant": round(micro_f1, 4),
+            "macro_precision": round(macro_precision, 4),
+            "macro_recall": round(macro_recall, 4),
+            "macro_relevant": round(macro_f1, 4)
+        }
+
+        return rows, summary
+
+    def evaluate_from_file(self, test_csv):
+        try:
+            test_df = pd.read_csv(test_csv).fillna("")
+        except Exception as e:
+            print(f"Could not read evaluation file: {e}")
+            return
+
+        required_cols = ["question", "expected_intent", "expected_answer"]
+        missing = [c for c in required_cols if c not in test_df.columns]
+        if missing:
+            print("Evaluation CSV missing columns:", ", ".join(missing))
+            return
+
+        y_true = []
+        y_pred = []
+        detailed_rows = []
+
+        for _, row in test_df.iterrows():
+            question = str(row["question"]).strip()
+            expected_intent = str(row["expected_intent"]).strip()
+
+            result = self.get_response(question)
+            predicted_intent = str(result.get("predicted_intent", "None"))
+
+            y_true.append(expected_intent)
+            y_pred.append(predicted_intent)
+
+            detailed_rows.append({
+                "question": question,
+                "expected_intent": expected_intent,
+                "predicted_intent": predicted_intent,
+                "score": result.get("score", 0)
+            })
+
+        report_rows, summary = self.classification_metrics(y_true, y_pred)
+
+        report_df = pd.DataFrame(report_rows)
+        detailed_df = pd.DataFrame(detailed_rows)
+
+        report_df.to_csv("template_chatbot_evaluation_intent_report.csv", index=False)
+        detailed_df.to_csv("template_chatbot_evaluation_detailed_results.csv", index=False)
+
+        with open("template_chatbot_evaluation_report.txt", "w", encoding="utf-8") as f:
+            f.write("TEMPLATE CHATBOT EVALUATION REPORT\n")
+            f.write("=" * 50 + "\n\n")
+            f.write("Intent Classification Metrics\n")
+            f.write(str(report_df.to_string(index=False)))
+            f.write("\n\n")
+            f.write(f"Micro Precision: {summary['micro_precision']}\n")
+            f.write(f"Micro Recall   : {summary['micro_recall']}\n")
+            f.write(f"Micro Relevant : {summary['micro_relevant']}\n")
+            f.write(f"Macro Precision: {summary['macro_precision']}\n")
+            f.write(f"Macro Recall   : {summary['macro_recall']}\n")
+            f.write(f"Macro Relevant : {summary['macro_relevant']}\n")
+
+        print("\nIntent report saved to template_chatbot_evaluation_intent_report.csv")
+        print("Detailed results saved to template_chatbot_evaluation_detailed_results.csv")
+        print("Full text report saved to template_chatbot_evaluation_report.txt")
+
+        print("\nIntent Classification Summary")
+        print(report_df.to_string(index=False))
+        print(f"\nMicro Precision: {summary['micro_precision']}")
+        print(f"Micro Recall   : {summary['micro_recall']}")
+        print(f"Micro Relevant : {summary['micro_relevant']}")
+        print(f"Macro Precision: {summary['macro_precision']}")
+        print(f"Macro Recall   : {summary['macro_recall']}")
+        print(f"Macro Relevant : {summary['macro_relevant']}")
+
     def run(self):
         print("Enhanced TAR UMT Template RAG Chatbot")
+        print("Type 'evaluate' to run testing.")
         print("Type 'exit' or 'quit' to stop.\n")
 
         while True:
@@ -557,6 +701,11 @@ class TemplateRAGChatbot:
 
             if not user_query:
                 print("Please enter a valid question.")
+                continue
+
+            if user_query.lower() == "evaluate":
+                test_csv = input("Enter evaluation CSV file path: ").strip()
+                self.evaluate_from_file(test_csv)
                 continue
 
             result = self.get_response(user_query)

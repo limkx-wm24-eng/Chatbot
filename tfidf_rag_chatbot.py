@@ -2,8 +2,10 @@ import re
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
+from tkinter.scrolledtext import ScrolledText
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics import precision_recall_fscore_support
 import webbrowser
 from PIL import Image, ImageTk
 
@@ -156,6 +158,10 @@ class TFIDFRAGChatbot:
             return "document_info"
         if "deadline" in q or "closing date" in q or "last date" in q:
             return "deadline_info"
+        if "contact" in q or "phone" in q or "email" in q or "number" in q:
+            return "contact_info"
+        if "transport" in q or "bus" in q or "lrt" in q or "train" in q:
+            return "transport_info"
 
         return "None"
 
@@ -188,6 +194,15 @@ class TFIDFRAGChatbot:
 
         if "fee" in q or "payment" in q or "cost" in q or "tuition" in q:
             return "Fees depend on the programme and level of study. Please refer to the official TARUMT website for the latest fee details."
+
+        if "scholarship" in q or "loan" in q or "ptptn" in q or "financial aid" in q:
+            return "Students may check available scholarships, financial aid, or PTPTN options through TARUMT's official website or the student support office."
+
+        if "contact" in q or "phone" in q or "email" in q or "number" in q:
+            return "You can contact TARUMT through the official website for campus phone numbers, email addresses, and enquiry channels."
+
+        if "transport" in q or "bus" in q or "lrt" in q or "train" in q:
+            return "Students can check available public transport options and campus accessibility details through the official TARUMT website or campus office."
 
         return None
 
@@ -229,14 +244,130 @@ class TFIDFRAGChatbot:
             "predicted_intent": predicted_intent
         }
 
+    def run_evaluation(self, test_csv="testing.csv"):
+        try:
+            test_df = pd.read_csv(test_csv).fillna("")
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"Failed to load evaluation dataset:\n{e}"
+            }
+
+        required_cols = {"question", "expected_intent"}
+        if not required_cols.issubset(test_df.columns):
+            return {
+                "success": False,
+                "message": "Test dataset must contain columns: question, expected_intent"
+            }
+
+        y_true = []
+        y_pred = []
+        detailed_rows = []
+
+        for _, row in test_df.iterrows():
+            question = str(row["question"]).strip()
+            true_intent = str(row["expected_intent"]).strip()
+            expected_answer = str(row["expected_answer"]).strip() if "expected_answer" in test_df.columns else ""
+
+            result = self.get_response(question)
+            predicted_intent = result["predicted_intent"]
+            predicted_answer = result["answer"]
+            score = round(float(result["score"]), 4)
+
+            y_true.append(true_intent)
+            y_pred.append(predicted_intent)
+
+            detailed_rows.append({
+                "question": question,
+                "expected_intent": true_intent,
+                "predicted_intent": predicted_intent,
+                "score": score,
+                "intent_correct": "Yes" if true_intent == predicted_intent else "No",
+                "expected_answer": expected_answer,
+                "predicted_answer": predicted_answer
+            })
+
+        labels = sorted(list(set(y_true) | set(y_pred)))
+
+        precision, recall, fscore, support = precision_recall_fscore_support(
+            y_true, y_pred, labels=labels, zero_division=0
+        )
+
+        micro_p, micro_r, micro_f, _ = precision_recall_fscore_support(
+            y_true, y_pred, average="micro", zero_division=0
+        )
+
+        macro_p, macro_r, macro_f, _ = precision_recall_fscore_support(
+            y_true, y_pred, average="macro", zero_division=0
+        )
+
+        summary_lines = []
+        summary_lines.append("Detailed results saved to template_chatbot_evaluation_detailed_results.csv")
+        summary_lines.append("Full text report saved to template_chatbot_evaluation_report.txt")
+        summary_lines.append("")
+        summary_lines.append("Intent Classification Summary")
+        summary_lines.append("")
+        summary_lines.append(
+            f"{'intent':<22}{'precision':>12}{'recall':>10}{'relevant_score':>16}{'support':>10}"
+        )
+
+        for i, label in enumerate(labels):
+            summary_lines.append(
+                f"{label:<22}{precision[i]:>12.4f}{recall[i]:>10.4f}{fscore[i]:>16.4f}{support[i]:>10}"
+            )
+
+        summary_lines.append("")
+        summary_lines.append(f"Micro Precision: {micro_p:.4f}")
+        summary_lines.append(f"Micro Recall   : {micro_r:.4f}")
+        summary_lines.append(f"Micro Relevant : {micro_f:.4f}")
+        summary_lines.append(f"Macro Precision: {macro_p:.4f}")
+        summary_lines.append(f"Macro Recall   : {macro_r:.4f}")
+        summary_lines.append(f"Macro Relevant : {macro_f:.4f}")
+
+        full_report = "\n".join(summary_lines)
+
+        detailed_df = pd.DataFrame(detailed_rows)
+
+        detailed_csv = "template_chatbot_evaluation_detailed_results.csv"
+        report_txt = "template_chatbot_evaluation_report.txt"
+
+        try:
+            detailed_df.to_csv(detailed_csv, index=False, encoding="utf-8-sig")
+            with open(report_txt, "w", encoding="utf-8") as f:
+                f.write(full_report)
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"Evaluation completed, but failed to save files:\n{e}"
+            }
+
+        return {
+            "success": True,
+            "report": full_report,
+            "detailed_csv": detailed_csv,
+            "report_txt": report_txt,
+            "total_cases": len(test_df)
+        }
+
 
 class TARUMTChatbotGUI:
     def __init__(self, root, chatbot):
+        # Load icons
+        try:
+            bot_img = Image.open("bot.png").resize((32, 32))
+            user_img = Image.open("user.png").resize((32, 32))
+
+            self.bot_icon = ImageTk.PhotoImage(bot_img)
+            self.user_icon = ImageTk.PhotoImage(user_img)
+        except:
+            self.bot_icon = None
+            self.user_icon = None
+
         self.root = root
         self.chatbot = chatbot
 
         self.root.title("TARUMT FAQ Chatbot")
-        self.root.geometry("1280x800")
+        self.root.geometry("1250x780")
         self.root.configure(bg="#eef3fb")
         self.root.minsize(1080, 700)
 
@@ -256,36 +387,12 @@ class TARUMTChatbotGUI:
         self.input_bg = "#dce3ec"
 
         self.logo = None
-        self.bot_avatar = None
-        self.user_avatar = None
-
         self.placeholder = "Type your question here..."
         self.typing_bubble = None
         self.typing_job = None
         self.typing_step = 0
 
-        self.load_images()
         self.build_gui()
-
-    def load_images(self):
-        try:
-            logo_img = Image.open("tarumt_logo.jpg")
-            logo_img.thumbnail((420, 78))
-            self.logo = ImageTk.PhotoImage(logo_img)
-        except Exception:
-            self.logo = None
-
-        try:
-            bot_img = Image.open("bot.png").resize((38, 38))
-            self.bot_avatar = ImageTk.PhotoImage(bot_img)
-        except Exception:
-            self.bot_avatar = None
-
-        try:
-            user_img = Image.open("user.png").resize((38, 38))
-            self.user_avatar = ImageTk.PhotoImage(user_img)
-        except Exception:
-            self.user_avatar = None
 
     def build_gui(self):
         self.build_header()
@@ -308,27 +415,35 @@ class TARUMTChatbotGUI:
         button.bind("<Leave>", on_leave)
 
     def build_header(self):
-        header = tk.Frame(self.root, bg=self.primary, height=112)
+        header = tk.Frame(self.root, bg=self.primary, height=110)
         header.pack(fill="x")
         header.pack_propagate(False)
 
         left = tk.Frame(header, bg=self.primary)
         left.pack(side="left", padx=20, pady=16)
 
-        if self.logo is not None:
-            tk.Label(left, image=self.logo, bg=self.primary).pack(side="left", padx=(0, 16))
+        try:
+            logo_img = Image.open("tarumt_logo.jpg")
+            logo_img.thumbnail((420, 80))
+            self.logo = ImageTk.PhotoImage(logo_img)
 
-            text_wrap = tk.Frame(left, bg=self.primary)
-            text_wrap.pack(side="left")
             tk.Label(
-                text_wrap,
-                text="FAQ Chatbot",
-                font=("Arial", 24, "bold"),
+                left,
+                image=self.logo,
+                bg=self.primary
+            ).pack(side="left", padx=(0, 18))
+        except Exception:
+            title_wrap = tk.Frame(left, bg=self.primary)
+            title_wrap.pack(side="left")
+            tk.Label(
+                title_wrap,
+                text="TARUMT FAQ Chatbot",
+                font=("Arial", 28, "bold"),
                 bg=self.primary,
                 fg="white"
             ).pack(anchor="w")
             tk.Label(
-                text_wrap,
+                title_wrap,
                 text="University Information Assistant",
                 font=("Arial", 12),
                 bg=self.primary,
@@ -336,11 +451,11 @@ class TARUMTChatbotGUI:
             ).pack(anchor="w", pady=(4, 0))
         else:
             text_wrap = tk.Frame(left, bg=self.primary)
-            text_wrap.pack(side="left")
+            text_wrap.pack(side="left", padx=(0, 8))
             tk.Label(
                 text_wrap,
                 text="TARUMT FAQ Chatbot",
-                font=("Arial", 28, "bold"),
+                font=("Arial", 24, "bold"),
                 bg=self.primary,
                 fg="white"
             ).pack(anchor="w")
@@ -380,16 +495,37 @@ class TARUMTChatbotGUI:
         sidebar.pack(side="left", fill="y", padx=(0, 14))
         sidebar.pack_propagate(False)
 
+        # Title
         tk.Label(
             sidebar,
             text="Quick Questions",
-            font=("Arial", 19, "bold"),
+            font=("Arial", 18, "bold"),
             bg=self.sidebar_bg,
             fg=self.primary
-        ).pack(anchor="w", padx=18, pady=(22, 14))
+        ).pack(anchor="w", padx=18, pady=(20, 12))
 
-        button_wrap = tk.Frame(sidebar, bg=self.sidebar_bg)
-        button_wrap.pack(fill="x", padx=16)
+        # ===== Top scroll area container =====
+        scroll_area = tk.Frame(sidebar, bg=self.sidebar_bg)
+        scroll_area.pack(fill="both", expand=True, padx=10)
+
+        canvas = tk.Canvas(scroll_area, bg=self.sidebar_bg, highlightthickness=0)
+        scrollbar = tk.Scrollbar(scroll_area, orient="vertical", command=canvas.yview)
+        scroll_frame = tk.Frame(canvas, bg=self.sidebar_bg)
+
+        canvas_window = canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+
+        def on_frame_configure(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+
+        def on_canvas_configure(event):
+            canvas.itemconfig(canvas_window, width=event.width)
+
+        scroll_frame.bind("<Configure>", on_frame_configure)
+        canvas.bind("<Configure>", on_canvas_configure)
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
 
         quick_questions = [
             "What are the intake months?",
@@ -404,73 +540,67 @@ class TARUMTChatbotGUI:
 
         for q in quick_questions:
             btn = tk.Button(
-                button_wrap,
+                scroll_frame,
                 text=q,
-                font=("Arial", 10),
+                font=("Arial", 11),
                 bg="white",
                 fg="#334155",
-                wraplength=235,
+                wraplength=260,
                 justify="left",
                 anchor="w",
                 relief="flat",
                 bd=0,
                 padx=16,
-                pady=14,
+                pady=12,
                 cursor="hand2",
                 command=lambda question=q: self.ask_quick_question(question)
             )
-            btn.pack(fill="x", pady=5)
+            btn.pack(fill="x", pady=6)
             self.add_hover(btn, "white", "#e0e7ff")
 
-        tk.Frame(sidebar, bg=self.sidebar_bg, height=10).pack(fill="x", expand=True)
+        # Mouse wheel only for sidebar canvas
+        def _on_mousewheel(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
-        info_card = tk.Frame(sidebar, bg="white", bd=0, relief="flat")
-        info_card.pack(fill="x", padx=16, pady=(8, 16))
+        canvas.bind("<Enter>", lambda e: canvas.bind_all("<MouseWheel>", _on_mousewheel))
+        canvas.bind("<Leave>", lambda e: canvas.unbind_all("<MouseWheel>"))
 
-        tk.Label(
-            info_card,
-            text="Chat Info",
-            font=("Arial", 16, "bold"),
-            bg="white",
-            fg="#163b82"
-        ).pack(anchor="w", padx=18, pady=(16, 8))
+        # ===== Bottom action area =====
+        bottom_area = tk.Frame(sidebar, bg=self.sidebar_bg)
+        bottom_area.pack(fill="x", padx=16, pady=(10, 12))
 
-        self.info_intent = tk.Label(
-            info_card,
-            text="Predicted Intent: -",
-            font=("Arial", 11),
-            bg="white",
-            fg="#334155",
-            anchor="w",
-            justify="left"
+        tk.Frame(bottom_area, bg="#cbd5e1", height=1).pack(fill="x", pady=(0, 10))
+
+        eval_btn = tk.Button(
+            bottom_area,
+            text="Run Evaluation",
+            font=("Arial", 10, "bold"),
+            bg="#0f766e",
+            fg="white",
+            relief="flat",
+            bd=0,
+            padx=10,
+            pady=8,
+            cursor="hand2",
+            command=self.run_evaluation_popup
         )
-        self.info_intent.pack(fill="x", padx=18, pady=(4, 2))
-
-        self.info_score = tk.Label(
-            info_card,
-            text="Confidence Score: -",
-            font=("Arial", 11),
-            bg="white",
-            fg="#334155",
-            anchor="w",
-            justify="left"
-        )
-        self.info_score.pack(fill="x", padx=18, pady=(2, 14))
+        eval_btn.pack(fill="x", pady=(0, 8))
+        self.add_hover(eval_btn, "#0f766e", "#0d9488")
 
         clear_btn = tk.Button(
-            info_card,
+            bottom_area,
             text="Clear Chat",
-            font=("Arial", 11, "bold"),
+            font=("Arial", 10, "bold"),
             bg=self.danger,
             fg="white",
             relief="flat",
             bd=0,
-            padx=12,
-            pady=12,
+            padx=10,
+            pady=8,
             cursor="hand2",
             command=self.clear_chat
         )
-        clear_btn.pack(fill="x", padx=18, pady=(0, 16))
+        clear_btn.pack(fill="x")
         self.add_hover(clear_btn, self.danger, "#c9444e")
 
     def build_chat_panel(self, parent):
@@ -516,8 +646,8 @@ class TARUMTChatbotGUI:
 
         self.canvas.pack(side="left", fill="both", expand=True)
         self.scrollbar.pack(side="right", fill="y")
-
-        self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
+        self.canvas.bind("<Enter>", lambda e: self.canvas.bind_all("<MouseWheel>", self.on_mousewheel))
+        self.canvas.bind("<Leave>", lambda e: self.canvas.unbind_all("<MouseWheel>"))
 
     def build_footer(self):
         footer = tk.Frame(self.root, bg=self.bg)
@@ -618,53 +748,51 @@ class TARUMTChatbotGUI:
             x1, y1
         ]
 
-    def create_text_avatar(self, parent, label_text, bg_color, fg_color, side):
-        avatar = tk.Canvas(parent, width=40, height=40, bg=self.chat_bg, highlightthickness=0, bd=0)
-        avatar.create_oval(2, 2, 38, 38, fill=bg_color, outline=bg_color)
-        avatar.create_text(20, 20, text=label_text, fill=fg_color, font=("Arial", 11, "bold"))
-        avatar.pack(side=side, padx=6)
-
     def create_message_card(self, sender, message, meta=None, is_user=False):
         outer = tk.Frame(self.chat_container, bg=self.chat_bg)
-        outer.pack(fill="x", padx=10, pady=8)
+        outer.pack(fill="x", padx=18, pady=8)
 
         if is_user:
             bubble_color = self.user_bubble
             text_color = "#1e3a8a"
-            avatar_img = self.user_avatar
-            avatar_bg = "#3b82f6"
-            avatar_fg = "white"
-            row_side = "right"
-            avatar_text = "U"
+            anchor = "e"
+            padx = (220, 20)
         else:
             bubble_color = self.bot_bubble
             text_color = "#065f46"
-            avatar_img = self.bot_avatar
-            avatar_bg = "#0f766e"
-            avatar_fg = "white"
-            row_side = "left"
-            avatar_text = "B"
+            anchor = "w"
+            padx = (20, 220)
 
-        row = tk.Frame(outer, bg=self.chat_bg)
-        row.pack(fill="x")
+        bubble_canvas = tk.Canvas(
+            outer,
+            bg=self.chat_bg,
+            highlightthickness=0,
+            bd=0
+        )
 
-        if not is_user:
-            if avatar_img is not None:
-                tk.Label(row, image=avatar_img, bg=self.chat_bg).pack(side="left", padx=6)
-            else:
-                self.create_text_avatar(row, avatar_text, avatar_bg, avatar_fg, "left")
-
-        bubble_canvas = tk.Canvas(row, bg=self.chat_bg, highlightthickness=0, bd=0)
         bubble_frame = tk.Frame(bubble_canvas, bg=bubble_color, bd=0)
         window_id = bubble_canvas.create_window(12, 10, window=bubble_frame, anchor="nw")
 
+        header_row = tk.Frame(bubble_frame, bg=bubble_color)
+
+        header_row.pack(anchor="w", padx=16, pady=(12, 4))
+
+        icon = self.user_icon if is_user else self.bot_icon
+
+        if icon is not None:
+            tk.Label(
+                header_row,
+                image=icon,
+                bg=bubble_color
+            ).pack(side="left", padx=(0, 6))
+
         tk.Label(
-            bubble_frame,
+            header_row,
             text=sender,
             font=("Arial", 11, "bold"),
             bg=bubble_color,
             fg=text_color
-        ).pack(anchor="w", padx=16, pady=(12, 4))
+        ).pack(side="left")
 
         tk.Label(
             bubble_frame,
@@ -672,7 +800,7 @@ class TARUMTChatbotGUI:
             font=("Arial", 11),
             bg=bubble_color,
             fg="#111827",
-            wraplength=500,
+            wraplength=480,
             justify="left"
         ).pack(anchor="w", padx=16, pady=(0, 6))
 
@@ -683,7 +811,7 @@ class TARUMTChatbotGUI:
                 font=("Arial", 9, "italic"),
                 bg=bubble_color,
                 fg="#6b7280",
-                wraplength=500,
+                wraplength=520,
                 justify="left"
             ).pack(anchor="w", padx=16, pady=(0, 12))
         else:
@@ -710,14 +838,7 @@ class TARUMTChatbotGUI:
         bubble_canvas.coords(window_id, 12, 10)
         bubble_canvas.config(width=width + 4, height=height + 4)
 
-        if is_user:
-            bubble_canvas.pack(side="right", padx=5)
-            if avatar_img is not None:
-                tk.Label(row, image=avatar_img, bg=self.chat_bg).pack(side="right", padx=6)
-            else:
-                self.create_text_avatar(row, avatar_text, avatar_bg, avatar_fg, "right")
-        else:
-            bubble_canvas.pack(side="left", padx=5)
+        bubble_canvas.pack(anchor=anchor, padx=padx)
 
         self.root.after(100, lambda: self.canvas.yview_moveto(1.0))
 
@@ -725,18 +846,16 @@ class TARUMTChatbotGUI:
         self.hide_typing_indicator()
 
         outer = tk.Frame(self.chat_container, bg=self.chat_bg)
-        outer.pack(fill="x", padx=10, pady=8)
-
-        row = tk.Frame(outer, bg=self.chat_bg)
-        row.pack(fill="x")
-
-        if self.bot_avatar is not None:
-            tk.Label(row, image=self.bot_avatar, bg=self.chat_bg).pack(side="left", padx=6)
-        else:
-            self.create_text_avatar(row, "B", "#0f766e", "white", "left")
+        outer.pack(fill="x", padx=18, pady=8)
 
         bubble_color = self.bot_bubble
-        bubble_canvas = tk.Canvas(row, bg=self.chat_bg, highlightthickness=0, bd=0)
+        bubble_canvas = tk.Canvas(
+            outer,
+            bg=self.chat_bg,
+            highlightthickness=0,
+            bd=0
+        )
+
         bubble_frame = tk.Frame(bubble_canvas, bg=bubble_color, bd=0)
         window_id = bubble_canvas.create_window(12, 10, window=bubble_frame, anchor="nw")
 
@@ -773,13 +892,12 @@ class TARUMTChatbotGUI:
 
         bubble_canvas.coords(window_id, 12, 10)
         bubble_canvas.config(width=width + 4, height=height + 4)
-        bubble_canvas.pack(side="left", padx=5)
+        bubble_canvas.pack(anchor="w", padx=(20, 220))
 
         self.typing_bubble = {
             "outer": outer,
             "label": typing_label
         }
-
         self.typing_step = 0
         self.animate_typing()
         self.root.after(100, lambda: self.canvas.yview_moveto(1.0))
@@ -822,8 +940,6 @@ class TARUMTChatbotGUI:
 
         self.hide_typing_indicator()
         self.add_bot_message(answer, intent, score)
-        self.info_intent.config(text=f"Predicted Intent: {intent}")
-        self.info_score.config(text=f"Confidence Score: {score}")
         self.status_label.config(text="Answered")
 
         self.user_input.delete(0, tk.END)
@@ -858,11 +974,60 @@ class TARUMTChatbotGUI:
         for widget in self.chat_container.winfo_children():
             widget.destroy()
 
-        self.info_intent.config(text="Predicted Intent: -")
-        self.info_score.config(text="Confidence Score: -")
         self.status_label.config(text="Ready")
 
         self.add_system_message("Chat has been cleared.")
+
+    def run_evaluation_popup(self):
+        self.status_label.config(text="Running evaluation...")
+        self.root.update_idletasks()
+
+        result = self.chatbot.run_evaluation("testing.csv")
+
+        if not result["success"]:
+            self.status_label.config(text="Evaluation failed")
+            messagebox.showerror("Evaluation Error", result["message"])
+            return
+
+        self.status_label.config(text="Evaluation completed")
+
+        win = tk.Toplevel(self.root)
+        win.title("Evaluation Result")
+        win.geometry("950x720")
+        win.configure(bg="#eef3fb")
+
+        tk.Label(
+            win,
+            text="Chatbot Evaluation Result",
+            font=("Arial", 18, "bold"),
+            bg="#eef3fb",
+            fg="#0d47a1"
+        ).pack(pady=(15, 10))
+
+        tk.Label(
+            win,
+            text=(
+                f"Detailed results saved to {result['detailed_csv']}\n"
+                f"Full text report saved to {result['report_txt']}\n\n"
+                f"Total Test Cases: {result['total_cases']}"
+            ),
+            font=("Arial", 11),
+            bg="#eef3fb",
+            fg="#1f2937",
+            justify="left"
+        ).pack(pady=(0, 10))
+
+        text_area = ScrolledText(
+            win,
+            wrap=tk.WORD,
+            font=("Consolas", 11),
+            bg="white",
+            fg="#111827"
+        )
+        text_area.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+
+        text_area.insert(tk.END, result["report"])
+        text_area.config(state="disabled")
 
 
 def main():

@@ -9,7 +9,7 @@ from sklearn.metrics import precision_recall_fscore_support
 import webbrowser
 from PIL import Image, ImageTk
 
-# Class TF-IDF-based RAG Chatbot for TARUMT FAQ dataset
+
 class TFIDFRAGChatbot:
     def __init__(self, csv_file):
         self.csv_file = csv_file
@@ -244,13 +244,118 @@ class TFIDFRAGChatbot:
             "predicted_intent": predicted_intent
         }
 
+    def run_evaluation(self, test_csv="testing.csv"):
+        try:
+            test_df = pd.read_csv(test_csv).fillna("")
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"Failed to load evaluation dataset:\n{e}"
+            }
+
+        required_cols = {"question", "expected_intent"}
+        if not required_cols.issubset(test_df.columns):
+            return {
+                "success": False,
+                "message": "Test dataset must contain columns: question, expected_intent"
+            }
+
+        y_true = []
+        y_pred = []
+        detailed_rows = []
+
+        for _, row in test_df.iterrows():
+            question = str(row["question"]).strip()
+            true_intent = str(row["expected_intent"]).strip()
+            expected_answer = str(row["expected_answer"]).strip() if "expected_answer" in test_df.columns else ""
+
+            result = self.get_response(question)
+            predicted_intent = result["predicted_intent"]
+            predicted_answer = result["answer"]
+            score = round(float(result["score"]), 4)
+
+            y_true.append(true_intent)
+            y_pred.append(predicted_intent)
+
+            detailed_rows.append({
+                "question": question,
+                "expected_intent": true_intent,
+                "predicted_intent": predicted_intent,
+                "score": score,
+                "intent_correct": "Yes" if true_intent == predicted_intent else "No",
+                "expected_answer": expected_answer,
+                "predicted_answer": predicted_answer
+            })
+
+        labels = sorted(list(set(y_true) | set(y_pred)))
+
+        precision, recall, fscore, support = precision_recall_fscore_support(
+            y_true, y_pred, labels=labels, zero_division=0
+        )
+
+        micro_p, micro_r, micro_f, _ = precision_recall_fscore_support(
+            y_true, y_pred, average="micro", zero_division=0
+        )
+
+        macro_p, macro_r, macro_f, _ = precision_recall_fscore_support(
+            y_true, y_pred, average="macro", zero_division=0
+        )
+
+        summary_lines = []
+        summary_lines.append("Detailed results saved to template_chatbot_evaluation_detailed_results.csv")
+        summary_lines.append("Full text report saved to template_chatbot_evaluation_report.txt")
+        summary_lines.append("")
+        summary_lines.append("Intent Classification Summary")
+        summary_lines.append("")
+        summary_lines.append(
+            f"{'intent':<22}{'precision':>12}{'recall':>10}{'relevant_score':>16}{'support':>10}"
+        )
+
+        for i, label in enumerate(labels):
+            summary_lines.append(
+                f"{label:<22}{precision[i]:>12.4f}{recall[i]:>10.4f}{fscore[i]:>16.4f}{support[i]:>10}"
+            )
+
+        summary_lines.append("")
+        summary_lines.append(f"Micro Precision: {micro_p:.4f}")
+        summary_lines.append(f"Micro Recall   : {micro_r:.4f}")
+        summary_lines.append(f"Micro Relevant : {micro_f:.4f}")
+        summary_lines.append(f"Macro Precision: {macro_p:.4f}")
+        summary_lines.append(f"Macro Recall   : {macro_r:.4f}")
+        summary_lines.append(f"Macro Relevant : {macro_f:.4f}")
+
+        full_report = "\n".join(summary_lines)
+
+        detailed_df = pd.DataFrame(detailed_rows)
+
+        detailed_csv = "template_chatbot_evaluation_detailed_results.csv"
+        report_txt = "template_chatbot_evaluation_report.txt"
+
+        try:
+            detailed_df.to_csv(detailed_csv, index=False, encoding="utf-8-sig")
+            with open(report_txt, "w", encoding="utf-8") as f:
+                f.write(full_report)
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"Evaluation completed, but failed to save files:\n{e}"
+            }
+
+        return {
+            "success": True,
+            "report": full_report,
+            "detailed_csv": detailed_csv,
+            "report_txt": report_txt,
+            "total_cases": len(test_df)
+        }
+
 
 class TARUMTChatbotGUI:
     def __init__(self, root, chatbot):
         # Load icons
         try:
-            bot_img = Image.open("bot.png").resize((32, 32))
-            user_img = Image.open("user.png").resize((32, 32))
+            bot_img = Image.open("picture/bot.png").resize((32, 32))
+            user_img = Image.open("picture/user.png").resize((32, 32))
 
             self.bot_icon = ImageTk.PhotoImage(bot_img)
             self.user_icon = ImageTk.PhotoImage(user_img)
@@ -318,7 +423,7 @@ class TARUMTChatbotGUI:
         left.pack(side="left", padx=20, pady=16)
 
         try:
-            logo_img = Image.open("tarumt_logo.jpg")
+            logo_img = Image.open("picture/tarumt_logo.jpg")
             logo_img.thumbnail((420, 80))
             self.logo = ImageTk.PhotoImage(logo_img)
 
@@ -328,39 +433,26 @@ class TARUMTChatbotGUI:
                 bg=self.primary
             ).pack(side="left", padx=(0, 18))
         except Exception:
-            title_wrap = tk.Frame(left, bg=self.primary)
-            title_wrap.pack(side="left")
-            tk.Label(
-                title_wrap,
-                text="TARUMT FAQ Chatbot",
-                font=("Arial", 28, "bold"),
-                bg=self.primary,
-                fg="white"
-            ).pack(anchor="w")
-            tk.Label(
-                title_wrap,
-                text="University Information Assistant",
-                font=("Arial", 12),
-                bg=self.primary,
-                fg="#dbeafe"
-            ).pack(anchor="w", pady=(4, 0))
-        else:
-            text_wrap = tk.Frame(left, bg=self.primary)
-            text_wrap.pack(side="left", padx=(0, 8))
-            tk.Label(
-                text_wrap,
-                text="TARUMT FAQ Chatbot",
-                font=("Arial", 24, "bold"),
-                bg=self.primary,
-                fg="white"
-            ).pack(anchor="w")
-            tk.Label(
-                text_wrap,
-                text="University Information Assistant",
-                font=("Arial", 12),
-                bg=self.primary,
-                fg="#dbeafe"
-            ).pack(anchor="w", pady=(4, 0))
+            pass
+
+        text_wrap = tk.Frame(left, bg=self.primary)
+        text_wrap.pack(side="left", padx=(0, 8))
+
+        tk.Label(
+            text_wrap,
+            text="TARUMT FAQ Chatbot",
+            font=("Arial", 24, "bold"),
+            bg=self.primary,
+            fg="white"
+        ).pack(anchor="w")
+
+        tk.Label(
+            text_wrap,
+            text="University Information Assistant",
+            font=("Arial", 12),
+            bg=self.primary,
+            fg="#dbeafe"
+        ).pack(anchor="w", pady=(4, 0))
 
         website_btn = tk.Button(
             header,
@@ -377,7 +469,6 @@ class TARUMTChatbotGUI:
         )
         website_btn.pack(side="right", padx=26)
         self.add_hover(website_btn, "white", "#dbeafe")
-
     def build_main(self):
         main = tk.Frame(self.root, bg=self.bg)
         main.pack(fill="both", expand=True, padx=18, pady=18)
@@ -669,7 +760,7 @@ class TARUMTChatbotGUI:
         window_id = bubble_canvas.create_window(12, 10, window=bubble_frame, anchor="nw")
 
         header_row = tk.Frame(bubble_frame, bg=bubble_color)
-
+        
         header_row.pack(anchor="w", padx=16, pady=(12, 4))
 
         icon = self.user_icon if is_user else self.bot_icon
@@ -873,10 +964,61 @@ class TARUMTChatbotGUI:
 
         self.add_system_message("Chat has been cleared.")
 
+    def run_evaluation_popup(self):
+        self.status_label.config(text="Running evaluation...")
+        self.root.update_idletasks()
+
+        result = self.chatbot.run_evaluation("dataset/testing.csv")
+
+        if not result["success"]:
+            self.status_label.config(text="Evaluation failed")
+            messagebox.showerror("Evaluation Error", result["message"])
+            return
+
+        self.status_label.config(text="Evaluation completed")
+
+        win = tk.Toplevel(self.root)
+        win.title("Evaluation Result")
+        win.geometry("950x720")
+        win.configure(bg="#eef3fb")
+
+        tk.Label(
+            win,
+            text="Chatbot Evaluation Result",
+            font=("Arial", 18, "bold"),
+            bg="#eef3fb",
+            fg="#0d47a1"
+        ).pack(pady=(15, 10))
+
+        tk.Label(
+            win,
+            text=(
+                f"Detailed results saved to {result['detailed_csv']}\n"
+                f"Full text report saved to {result['report_txt']}\n\n"
+                f"Total Test Cases: {result['total_cases']}"
+            ),
+            font=("Arial", 11),
+            bg="#eef3fb",
+            fg="#1f2937",
+            justify="left"
+        ).pack(pady=(0, 10))
+
+        text_area = ScrolledText(
+            win,
+            wrap=tk.WORD,
+            font=("Consolas", 11),
+            bg="white",
+            fg="#111827"
+        )
+        text_area.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+
+        text_area.insert(tk.END, result["report"])
+        text_area.config(state="disabled")
+
 
 def main():
     try:
-        chatbot = TFIDFRAGChatbot("\dataset\tarumt_faq_dataset.csv")
+        chatbot = TFIDFRAGChatbot("dataset/tarumt_faq_dataset.csv")
     except Exception as e:
         root = tk.Tk()
         root.withdraw()

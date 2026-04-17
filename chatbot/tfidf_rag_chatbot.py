@@ -876,7 +876,7 @@ class TARUMTChatbotGUI:
 
 def main():
     try:
-        chatbot = TFIDFRAGChatbot("tarumt_faq_dataset.csv")
+        chatbot = TFIDFRAGChatbot("\dataset\tarumt_faq_dataset.csv")
     except Exception as e:
         root = tk.Tk()
         root.withdraw()

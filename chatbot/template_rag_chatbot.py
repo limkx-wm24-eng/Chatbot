@@ -713,7 +713,7 @@ class TemplateRAGChatbot:
 
 
 if __name__ == "__main__":
-    csv_path = "tarumt_faq_dataset.csv"
+    csv_path = "dataset/tarumt_faq_dataset.csv"
 
     chatbot = TemplateRAGChatbot(
         csv_file=csv_path,

@@ -1,7 +1,11 @@
 import re
 import pandas as pd
+import tkinter as tk
+from tkinter import ttk, filedialog, messagebox, scrolledtext
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import requests
+import webbrowser
 
 
 class TFIDFRAGChatbot:
@@ -116,13 +120,12 @@ class TFIDFRAGChatbot:
         self.df = pd.read_csv(self.csv_file).fillna("")
 
         self.df["combined_text"] = (
-            self.df["question"] + " " +
-            self.df["context"] + " " +
-            self.df["answer"]
+            self.df["question"].astype(str) + " " +
+            self.df["context"].astype(str) + " " +
+            self.df["answer"].astype(str)
         )
 
         self.df["clean_text"] = self.df["combined_text"].apply(self.normalize_text)
-
         self.build_index()
 
     # =============================
@@ -197,7 +200,7 @@ class TFIDFRAGChatbot:
         if "course" in q and "requirements" not in q:
             return "TARUMT offers courses in Engineering, Information Technology, Business and Accounting."
 
-        if "programme" in q or "diploma" in q or "degree" in q:
+        if "programme" in q or "diploma" in q or "degree" in q or "postgraduate" in q:
             return "TARUMT offers Diploma, Degree and Postgraduate programmes."
 
         if "entry" in q or "requirements" in q:
@@ -214,8 +217,10 @@ class TFIDFRAGChatbot:
         word_vec = self.word_vectorizer.transform([query])
         char_vec = self.char_vectorizer.transform([query])
 
-        scores = 0.6 * cosine_similarity(word_vec, self.word_matrix).flatten() + \
-                 0.4 * cosine_similarity(char_vec, self.char_matrix).flatten()
+        scores = (
+            0.6 * cosine_similarity(word_vec, self.word_matrix).flatten() +
+            0.4 * cosine_similarity(char_vec, self.char_matrix).flatten()
+        )
 
         best_idx = scores.argmax()
         best_score = scores[best_idx]
@@ -308,14 +313,12 @@ class TFIDFRAGChatbot:
         try:
             test_df = pd.read_csv(test_csv).fillna("")
         except Exception as e:
-            print(f"Could not read evaluation file: {e}")
-            return
+            return False, f"Could not read evaluation file: {e}"
 
         required_cols = ["question", "expected_intent", "expected_answer"]
         missing = [c for c in required_cols if c not in test_df.columns]
         if missing:
-            print("Evaluation CSV missing columns:", ", ".join(missing))
-            return
+            return False, f"Evaluation CSV missing columns: {', '.join(missing)}"
 
         y_true = []
         y_pred = []
@@ -359,49 +362,240 @@ class TFIDFRAGChatbot:
             f.write(f"Macro Recall    : {summary['macro_recall']}\n")
             f.write(f"Macro Relevant  : {summary['macro_relevant']}\n")
 
-        print("\nIntent report saved to tfidf_chatbot_evaluation_intent_report.csv")
-        print("Detailed results saved to tfidf_chatbot_evaluation_detailed_results.csv")
-        print("Full text report saved to tfidf_chatbot_evaluation_report.txt")
+        result_text = []
+        result_text.append("Intent Classification Summary\n")
+        result_text.append(report_df.to_string(index=False))
+        result_text.append("\n")
+        result_text.append(f"Micro Precision : {summary['micro_precision']}")
+        result_text.append(f"Micro Recall    : {summary['micro_recall']}")
+        result_text.append(f"Micro Relevant  : {summary['micro_relevant']}")
+        result_text.append(f"Macro Precision : {summary['macro_precision']}")
+        result_text.append(f"Macro Recall    : {summary['macro_recall']}")
+        result_text.append(f"Macro Relevant  : {summary['macro_relevant']}")
 
-        print("\nIntent Classification Summary")
-        print(report_df.to_string(index=False))
-        print(f"\nMicro Precision : {summary['micro_precision']}")
-        print(f"Micro Recall    : {summary['micro_recall']}")
-        print(f"Micro Relevant  : {summary['micro_relevant']}")
-        print(f"Macro Precision : {summary['macro_precision']}")
-        print(f"Macro Recall    : {summary['macro_recall']}")
-        print(f"Macro Relevant  : {summary['macro_relevant']}")
+        return True, "\n".join(result_text)
 
     # =============================
-    # RUN
+    # OPTIONAL EXTERNAL API EXAMPLE
     # =============================
-    def run(self):
-        print("TARUMT TF-IDF Chatbot Running...")
-        print("Type 'evaluate' to run testing.")
-        print("Type 'exit' or 'quit' to stop.\n")
+    def get_joke_from_api(self):
+        """
+        Example of external API integration.
+        This uses a public joke API just to show platform/API extension.
+        """
+        try:
+            response = requests.get("https://official-joke-api.appspot.com/random_joke", timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                setup = data.get("setup", "")
+                punchline = data.get("punchline", "")
+                return f"{setup}\n{punchline}"
+            return "Could not get data from external API."
+        except Exception as e:
+            return f"API error: {e}"
 
-        while True:
-            user_input = input("You: ").strip()
 
-            if user_input.lower() in ["exit", "quit"]:
-                print("Goodbye.")
-                break
+class ChatbotGUI:
+    def __init__(self, root, chatbot):
+        self.root = root
+        self.chatbot = chatbot
 
-            if not user_input:
-                print("Please enter a valid question.")
-                continue
+        self.root.title("TARUMT Chatbot GUI")
+        self.root.geometry("900x650")
+        self.root.configure(bg="#f4f6f8")
 
-            if user_input.lower() == "evaluate":
-                test_csv = input("Enter evaluation CSV file path: ").strip()
-                self.evaluate_from_file(test_csv)
-                continue
+        self.build_gui()
 
-            result = self.get_response(user_input)
-            print("Bot:", result["answer"])
-            print("Predicted Intent:", result["predicted_intent"])
-            print("Score:", round(result["score"], 4))
+    def build_gui(self):
+        title = tk.Label(
+            self.root,
+            text="TARUMT TF-IDF Chatbot",
+            font=("Arial", 20, "bold"),
+            bg="#f4f6f8",
+            fg="#1f3b73"
+        )
+        title.pack(pady=10)
+
+        subtitle = tk.Label(
+            self.root,
+            text="GUI + Intent Detection + TF-IDF Retrieval + API Integration",
+            font=("Arial", 11),
+            bg="#f4f6f8",
+            fg="#555555"
+        )
+        subtitle.pack()
+
+        # Chat display
+        self.chat_area = scrolledtext.ScrolledText(
+            self.root,
+            wrap=tk.WORD,
+            width=100,
+            height=25,
+            font=("Arial", 11),
+            bg="white",
+            fg="black",
+            state="disabled"
+        )
+        self.chat_area.pack(padx=15, pady=15, fill=tk.BOTH, expand=True)
+
+        # Quick buttons
+        quick_frame = tk.Frame(self.root, bg="#f4f6f8")
+        quick_frame.pack(pady=5)
+
+        quick_questions = [
+            ("Intake", "What are the intake months?"),
+            ("Course", "What courses are offered?"),
+            ("Programme", "What programmes are offered?"),
+            ("Campus", "Where are the campuses located?"),
+            ("Apply", "How do I apply?"),
+            ("Requirements", "What are the entry requirements?")
+        ]
+
+        for text, question in quick_questions:
+            btn = tk.Button(
+                quick_frame,
+                text=text,
+                width=14,
+                command=lambda q=question: self.quick_ask(q),
+                bg="#dbe9ff"
+            )
+            btn.pack(side=tk.LEFT, padx=4)
+
+        # Input frame
+        input_frame = tk.Frame(self.root, bg="#f4f6f8")
+        input_frame.pack(fill=tk.X, padx=15, pady=10)
+
+        self.user_input = tk.Entry(input_frame, font=("Arial", 12))
+        self.user_input.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
+        self.user_input.bind("<Return>", lambda event: self.send_message())
+
+        send_btn = tk.Button(
+            input_frame,
+            text="Send",
+            font=("Arial", 11, "bold"),
+            bg="#4caf50",
+            fg="white",
+            width=10,
+            command=self.send_message
+        )
+        send_btn.pack(side=tk.LEFT, padx=5)
+
+        clear_btn = tk.Button(
+            input_frame,
+            text="Clear",
+            font=("Arial", 11, "bold"),
+            bg="#f44336",
+            fg="white",
+            width=10,
+            command=self.clear_chat
+        )
+        clear_btn.pack(side=tk.LEFT, padx=5)
+
+        # Bottom buttons
+        bottom_frame = tk.Frame(self.root, bg="#f4f6f8")
+        bottom_frame.pack(pady=5)
+
+        eval_btn = tk.Button(
+            bottom_frame,
+            text="Run Evaluation",
+            width=18,
+            command=self.run_evaluation,
+            bg="#ffcc80"
+        )
+        eval_btn.pack(side=tk.LEFT, padx=5)
+
+        api_btn = tk.Button(
+            bottom_frame,
+            text="Test External API",
+            width=18,
+            command=self.call_external_api,
+            bg="#b2dfdb"
+        )
+        api_btn.pack(side=tk.LEFT, padx=5)
+
+        website_btn = tk.Button(
+            bottom_frame,
+            text="Open TARUMT Website",
+            width=18,
+            command=self.open_website,
+            bg="#c5cae9"
+        )
+        website_btn.pack(side=tk.LEFT, padx=5)
+
+        self.append_chat("Bot", "Hello. Welcome to the TARUMT Chatbot GUI.\nAsk me about intake, courses, programmes, campus, admission, or requirements.")
+
+    def append_chat(self, sender, message):
+        self.chat_area.config(state="normal")
+        self.chat_area.insert(tk.END, f"{sender}: {message}\n\n")
+        self.chat_area.config(state="disabled")
+        self.chat_area.see(tk.END)
+
+    def send_message(self):
+        question = self.user_input.get().strip()
+        if not question:
+            messagebox.showwarning("Warning", "Please enter a question.")
+            return
+
+        self.append_chat("You", question)
+
+        result = self.chatbot.get_response(question)
+        answer = result["answer"]
+        intent = result["predicted_intent"]
+        score = round(result["score"], 4)
+
+        full_reply = f"{answer}\n\nPredicted Intent: {intent}\nScore: {score}"
+        self.append_chat("Bot", full_reply)
+
+        self.user_input.delete(0, tk.END)
+
+    def quick_ask(self, question):
+        self.user_input.delete(0, tk.END)
+        self.user_input.insert(0, question)
+        self.send_message()
+
+    def clear_chat(self):
+        self.chat_area.config(state="normal")
+        self.chat_area.delete(1.0, tk.END)
+        self.chat_area.config(state="disabled")
+        self.append_chat("Bot", "Chat cleared. Ask me a new question.")
+
+    def run_evaluation(self):
+        file_path = filedialog.askopenfilename(
+            title="Select Evaluation CSV",
+            filetypes=[("CSV files", "*.csv")]
+        )
+
+        if not file_path:
+            return
+
+        success, result_text = self.chatbot.evaluate_from_file(file_path)
+
+        if success:
+            messagebox.showinfo("Evaluation Completed", "Evaluation files have been saved successfully.")
+            self.append_chat("System", result_text)
+        else:
+            messagebox.showerror("Evaluation Error", result_text)
+
+    def call_external_api(self):
+        api_result = self.chatbot.get_joke_from_api()
+        self.append_chat("External API", api_result)
+
+    def open_website(self):
+        webbrowser.open("https://www.tarc.edu.my/")
+
+def main():
+    try:
+        chatbot = TFIDFRAGChatbot("tarumt_faq_dataset.csv")
+    except Exception as e:
+        root = tk.Tk()
+        root.withdraw()
+        messagebox.showerror("Startup Error", f"Failed to load chatbot data:\n{e}")
+        return
+
+    root = tk.Tk()
+    app = ChatbotGUI(root, chatbot)
+    root.mainloop()
 
 
 if __name__ == "__main__":
-    bot = TFIDFRAGChatbot("tarumt_faq_dataset.csv")
-    bot.run()
+    main()
